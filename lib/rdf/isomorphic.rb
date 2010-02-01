@@ -104,17 +104,11 @@ module RDF
       end
 
       # This if is the return statement, believe it or not.
-      # Is the anonymous node mapping 1 to 1?
+      #
+      # First, is the anonymous node mapping 1 to 1?
+      # If so, we have a bijection and are done
       if (bijection.keys.sort == nodes.sort) && (bijection.values.sort == other_nodes.sort)
         bijection
-      # If we only have one identifier left that is not hashed, we would have
-      # found it if it could work.  So see which ones are in the hash, and if
-      # only one does not have one, don't bother trying to recurse.  The
-      # recursion would just map this identifier to another one anyway,
-      # creating a false positive.
-      elsif (nodes.find_all do | iden | hashes.member? iden end.size) >=
-      nodes.size - 1
-        nil
       # So we've got unhashed nodes that can't be definitively grounded.  Make
       # a tentative bijection between two with identical ungrounded signatures
       # in the graph and recurse.
@@ -130,8 +124,7 @@ module RDF
             next unless potential_hashes[node] == potential_hashes[other_node]
             hash = Digest::SHA1.hexdigest(node.to_s)
             test_hashes = { node => hash, other_node => hash}
-            result = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes.merge(test_hashes))
-            bijection = result
+            bijection = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes.merge(test_hashes))
           end
           break if bijection
         end
