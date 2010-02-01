@@ -51,8 +51,16 @@ module RDF
       end
     end
 
-    protected
+    private
 
+    # The main recursive bijection algorithm.
+    #
+    # This algorithm is very similar to the one explained by Jeremy Carroll in
+    # http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf. Page 12 has the
+    # relevant pseudocode.
+    #
+    # Many more comments are in the method itself.
+    # @private
     def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes = {})
 
       # Some variable descriptions:
@@ -132,7 +140,7 @@ module RDF
       end
     end
 
-    # @nodoc
+    # @private
     # @return [RDF::Node]
     # Blank nodes appearing in given list of statements
     def blank_nodes_in(blank_stmt_list)
@@ -156,35 +164,50 @@ module RDF
     #
     # Returns a tuple consisting of grounded being true or false and the String
     # for the hash
-    # @nodoc
+    # @private
     # @return [Boolean, String]
     def node_hash_for(node,statements,hashes)
-      node_hashes = []
+      statement_signatures = []
       grounded = true
       statements.each do | statement |
         if (statement.object == node) || (statement.subject == node)
-          if statement.subject.anonymous? && (!(statement.subject == node))
-            if hashes.member? statement.subject
-              node_hashes << (hashes[statement.subject] + statement.predicate.to_s)
-            else
-              grounded = false
-            end
-          elsif !(statement.subject.anonymous?)
-            node_hashes << (statement.subject.to_s + statement.predicate.to_s)
-          end
-
-          if statement.object.anonymous? && (!(statement.object == node))
-            if hashes.member? statement.object
-              node_hashes << (statement.predicate.to_s + hashes[statement.object])
-            else
-              grounded = false
-            end
-          elsif !(statement.object.anonymous?)
-            node_hashes << (statement.predicate.to_s + statement.object.to_s)
+          statement_signatures << hash_string_for(statement,hashes)
+          [statement.subject, statement.object].each do | resource |
+            grounded = false unless grounded(resource, hashes)
           end
         end
       end
-      [grounded,Digest::SHA1.hexdigest(node_hashes.sort.to_s)]
+      [grounded,Digest::SHA1.hexdigest(statement_signatures.sort.to_s)]
+    end
+
+    # Provide a string signature for the given statement.
+    # @private
+    def hash_string_for(statement,hashes)
+      hash = ""
+      hash << string_for_node(statement.subject,hashes)
+      hash << statement.predicate.to_s
+      hash << string_for_node(statement.object,hashes)
+      hash
+    end
+
+    # Returns true if a given node is grounded
+    # @private
+    def grounded(node, hashes)
+      (!(node.anonymous?)) || (hashes.member? node)
+    end
+
+    # Provides a string for the given node for use in a string signature
+    # @private
+    def string_for_node(node, hashes)
+      if node.anonymous?
+        if hashes.member? node
+          hashes[node]
+        else
+          ""
+        end
+      else
+        node.to_s
+      end
     end
   end
 
