@@ -23,7 +23,7 @@ includes RDF::Repository, RDF::Graph, query results, and more.
 ## Algorithm
 
 More discussion on the algorithm used will be in a forthcoming blog post, but
-it is very, very similar to the one described by Jeremy Carroll in
+it is very similar to the one described by Jeremy Carroll in
 <http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.
 
 Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
