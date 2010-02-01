@@ -133,6 +133,8 @@ module RDF
     end
 
     # @nodoc
+    # @return [RDF::Node]
+    # Blank nodes appearing in given list of statements
     def blank_nodes_in(blank_stmt_list)
       nodes = []
       blank_stmt_list.each do | statement |
@@ -142,15 +144,26 @@ module RDF
       nodes.uniq
     end
  
-    # @nodoc
-    # Generate a hash for a node based on the signature of the statements it appears in.
+    # Generate a hash for a node based on the signature of the statements it
+    # appears in.  Signatures consist of grounded elements in statements
+    # associated with a node, that is, anything but an ungrounded anonymous
+    # node.  Creating the hash is simply hashing a sorted list of each
+    # statement's signature, which is itself a concatenation of the string form
+    # of all grounded elements.
     #
-    def node_hash_for(identifier,statements,hashes)
+    # Nodes other than the given node are considered grounded if they are a
+    # member in the given hash.
+    #
+    # Returns a tuple consisting of grounded being true or false and the String
+    # for the hash
+    # @nodoc
+    # @return [Boolean, String]
+    def node_hash_for(node,statements,hashes)
       node_hashes = []
       grounded = true
       statements.each do | statement |
-        if (statement.object == identifier) || (statement.subject == identifier)
-          if statement.subject.anonymous? && (!(statement.subject == identifier))
+        if (statement.object == node) || (statement.subject == node)
+          if statement.subject.anonymous? && (!(statement.subject == node))
             if hashes.member? statement.subject
               node_hashes << (hashes[statement.subject] + statement.predicate.to_s)
             else
@@ -160,7 +173,7 @@ module RDF
             node_hashes << (statement.subject.to_s + statement.predicate.to_s)
           end
 
-          if statement.object.anonymous? && (!(statement.object == identifier))
+          if statement.object.anonymous? && (!(statement.object == node))
             if hashes.member? statement.object
               node_hashes << (statement.predicate.to_s + hashes[statement.object])
             else
