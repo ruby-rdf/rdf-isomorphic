@@ -43,11 +43,11 @@ module RDF
       unless named_statements_match
         nil
       else
-        blank_nodes = find_all { |statement| statement.has_blank_nodes? }
-        other_blank_nodes = other.find_all { |statement| statement.has_blank_nodes? }
-        identifiers = blank_identifiers_in(blank_nodes)
-        other_identifiers = blank_identifiers_in(other_blank_nodes)
-        build_bijection_to blank_nodes, identifiers, other_blank_nodes, other_identifiers
+        blank_stmts = find_all { |statement| statement.has_blank_nodes? }
+        other_blank_stmts = other.find_all { |statement| statement.has_blank_nodes? }
+        nodes = blank_nodes_in(blank_stmts)
+        other_nodes = blank_nodes_in(other_blank_stmts)
+        build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes
       end
     end
 
@@ -66,7 +66,6 @@ module RDF
       # A grounded node, the difference between the contents of
       # potential_hashes and hashes, is a node which has no ungrounded
       # anonymous neighbors in a relevant statement.
-      #
       potential_hashes = {}
       [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
         hash_needed = true
@@ -115,12 +114,13 @@ module RDF
       else
         bijection = nil
         nodes.each do | node |
-          # we don't replace grounded nodes' hashes
+          # We don't replace grounded nodes' hashes
           next if hashes.member? node
           bijectable = other_nodes.any? do | other_node |
-            # we don't replace grounded nodes' hashes
+            # We don't replace grounded nodes' hashes
             next if hashes.member? other_node
-            # don't bother unless its even feasible
+            # The ungrounded signature must match for this pair to have a chance.
+            # If the signature doesn't match, skip it.
             next unless potential_hashes[node] == potential_hashes[other_node]
             hash = Digest::SHA1.hexdigest(node.to_s)
             test_hashes = { node => hash, other_node => hash}
@@ -132,20 +132,20 @@ module RDF
       end
     end
 
-    def blank_identifiers_in(blank_node_list)
-      identifiers = []
-      blank_node_list.each do | statement |
-        identifiers << statement.object if statement.object.anonymous?
-        identifiers << statement.subject if statement.subject.anonymous?
+    # @nodoc
+    def blank_nodes_in(blank_stmt_list)
+      nodes = []
+      blank_stmt_list.each do | statement |
+        nodes << statement.object if statement.object.anonymous?
+        nodes << statement.subject if statement.subject.anonymous?
       end
-      identifiers.uniq
+      nodes.uniq
     end
-  
+ 
+    # @nodoc
+    # Generate a hash for a node based on the signature of the statements it appears in.
+    #
     def node_hash_for(identifier,statements,hashes)
-      # we use a numeric hash instead of a digest hash because there's no way
-      # to canonically order bnodes and thus no way to order the statements
-      # that bnodes appear in.  so we hash everything related to it and add
-      # those up instead.  
       node_hashes = []
       grounded = true
       statements.each do | statement |
