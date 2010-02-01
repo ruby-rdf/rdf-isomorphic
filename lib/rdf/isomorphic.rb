@@ -64,10 +64,17 @@ module RDF
       # bijection_hashes: duplicate of hashes from which we remove hashes to make sure bijection is one to one
       potential_hashes = {}
       [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
-        tuple.last.each do | node | 
-          grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
-          hashes[node] = hash if grounded
-          potential_hashes[node] = hash
+        hash_needed = true
+        while hash_needed 
+          hash_needed = false
+          tuple.last.each do | node |
+            grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
+            if grounded
+              hash_needed = true
+              hashes[node] = hash
+            end
+            potential_hashes[node] = hash
+          end
         end
       end
 
