@@ -3,24 +3,29 @@
 Provides RDF Isomorphism functionality for RDF.rb RDF::Enumerables.  That
 includes RDF::Repository, RDF::Graph, query results, and more.
 
-Synopsis:
+## Synopsis:
 
     require 'rdf/isomorphic'
     require 'rdf/ntriples'
     a = RDF::Repository.load './tests/isomorphic/test1/test1-1.nt'
     a.first
-    => #<RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .)>
+    => < RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .) >
     
     b = RDF::Repository.load './tests/isomorphic/test1/test1-2.nt'
     b.first
-    => #<RDF::Statement:0xd3801a(<http://example.org/a> <http://example.org/prop> <_:testing> .)>
+    => < RDF::Statement:0xd3801a(<http://example.org/a> <http://example.org/prop> <_:testing> .) >
 
     a.isomorphic_with? b
     => true
     a.bijection_to b
-    => {#<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)>}
+    => { #<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)> }
 
-Although `==` should perhaps be overwritten, RDF isomorphism is a
+## Algorithm
+More discussion on the algorithm used will be in a forthcoming blog post.
+
+### Equality
+
+Although it was considered to provide `==` to mean isomorphic, RDF isomorphism is a
 factorial-complexity problem and it seemed better to perhaps not overwrite such
 a commonly used method for that.  But it's really useful for specs in RDF
 libraries.  Try this:
@@ -40,6 +45,11 @@ libraries.  Try this:
       end
     end
 
-RDF::Isomorphism is not ready for use yet, but I need this, so if you're interested, stick around.
+### Information
+ * Author: Ben Lavender <blavender@gmail.com>
+ * Source: http://github.com/bhuga/RDF-Isomorphic
+ * Issues: http://github.com/bhuga/RDF-Isomorphic/issues
 
+### "License"
 
+rdf-isomorphic is free and unemcumbered software in the public domain.  For more information, see the accompanying UNLICENSE file or <http://unlicense.org>

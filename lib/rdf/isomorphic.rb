@@ -27,6 +27,10 @@ module RDF
     # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
     # bijection of this RDF::Enumerable's blank nodes, or nil if a bijection
     # cannot be found.
+    # @example
+    #     repository_a.bijection_to repository_b
+    # @param other [RDF::Enumerable]
+    # @return [Hash, nil]
     def bijection_to(other)
       named_statements_match = true
       each_statement do |statement|
