@@ -21,7 +21,16 @@ includes RDF::Repository, RDF::Graph, query results, and more.
     => { #<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)> }
 
 ## Algorithm
-More discussion on the algorithm used will be in a forthcoming blog post.
+
+More discussion on the algorithm used will be in a forthcoming blog post, but
+it is very, very similar to the one described by Jeremy Carroll in
+<http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.
+
+Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
+is a specialization of the naive factorial-time test for graph isomorphism,
+wherin non-anonymous RDF data lets us eliminate vast quantities of options well
+before we try them.  Pathological cases, such as graphs which only contain
+anonymous resources, will experience poor performance.
 
 ### Equality
 
