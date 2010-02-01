@@ -97,18 +97,15 @@ module RDF
           # eql? instead of include? since RDF.rb coincedentally-same-named identifiers will be ==
           other_nodes.any? do | item | k.eql?(item) end
         end
-        puts "tuple for #{node}: #{tuple.inspect}"
         next unless tuple
         target = tuple.first
         bijection_hashes.delete target
         bijection[node] = target
       end
-      puts "bijection: #{bijection.inspect}"
 
       # This if is the return statement, believe it or not.
       # Is the anonymous node mapping 1 to 1?
       if (bijection.keys.sort == nodes.sort) && (bijection.values.sort == other_nodes.sort)
-        puts "that last bijection?  totally awesome and good."
         bijection
       # If we only have one identifier left that is not hashed, we would have
       # found it if it could work.  So see which ones are in the hash, and if
@@ -117,36 +114,26 @@ module RDF
       # creating a false positive.
       elsif (nodes.find_all do | iden | hashes.member? iden end.size) >=
       nodes.size - 1
-        puts "collected #{nodes.find_all do | iden | hashes.member? iden end.inspect}"
-        puts "cannot reconcile.  false."
         nil
       # So we've got unhashed nodes that can't be definitively grounded.  Make
       # a tentative bijection between two with identical ungrounded signatures
       # in the graph and recurse.
       else
-        puts "collected (and ignored) #{nodes.find_all do | iden | hashes.member? iden end.inspect}"
         bijection = nil
         nodes.each do | node |
-          puts "checking for #{node } in hashes for recursion (#{!(hashes.member?(node)) || hashes[node].nil?})"
           # we don't replace grounded nodes' hashes
           next if hashes.member? node
-          puts "not found, here we go"
           bijectable = other_nodes.any? do | other_node |
             # we don't replace grounded nodes' hashes
             next if hashes.member? other_node
-            puts "is it possible? #{potential_hashes[node] == potential_hashes[other_node]}"
-            puts "why? #{potential_hashes[node]} must ==  #{potential_hashes[other_node]}"
             # don't bother unless its even feasible
             next unless potential_hashes[node] == potential_hashes[other_node]
             hash = Digest::SHA1.hexdigest(node.to_s)
             test_hashes = { node => hash, other_node => hash}
-            puts "trying another level of recursion, adding #{test_hashes}"
             result = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes.merge(test_hashes))
-            puts "that worked! we're done after adding #{test_hashes}" if result
             bijection = result
           end
           break if bijection
-          puts "that didn't work..."
         end
         bijection
       end
@@ -170,35 +157,27 @@ module RDF
       grounded = true
       statements.each do | statement |
         if (statement.object == identifier) || (statement.subject == identifier)
-          puts "adding #{statement.predicate.to_s} to hashes for #{identifier}"
           if statement.subject.anonymous? && (!(statement.subject == identifier))
             if hashes.member? statement.subject
-              puts "adding #{statement.subject.to_s} to hashes for #{identifier}"
               node_hashes << (hashes[statement.subject] + statement.predicate.to_s)
             else
-              puts "grounded false for #{identifier} on #{statement.subject}"
               grounded = false
             end
           elsif !(statement.subject.anonymous?)
-            puts "adding #{statement.subject.to_s} to hashes for #{identifier}"
             node_hashes << (statement.subject.to_s + statement.predicate.to_s)
           end
 
           if statement.object.anonymous? && (!(statement.object == identifier))
             if hashes.member? statement.object
-              puts "adding #{statement.object.to_s} to hashes for #{identifier}"
               node_hashes << (statement.predicate.to_s + hashes[statement.object])
             else
-              puts "grounded false for #{identifier} on #{statement.object}"
               grounded = false
             end
           elsif !(statement.object.anonymous?)
-            puts "adding #{statement.object.to_s} to hashes for #{identifier}"
             node_hashes << (statement.predicate.to_s + statement.object.to_s)
           end
         end
       end
-      puts "node_hash_for #{identifier} returning #{[grounded,Digest::SHA1.hexdigest(node_hashes.sort.to_s)].inspect}"
       [grounded,Digest::SHA1.hexdigest(node_hashes.sort.to_s)]
     end
   end
