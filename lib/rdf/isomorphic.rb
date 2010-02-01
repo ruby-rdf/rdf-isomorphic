@@ -55,38 +55,43 @@ module RDF
 
     def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes = {})
 
-      # Some variable help for developers:
+      # Some variable descriptions:
       # anon_stmts, other_anon_stmts:  All statements from this and other with anonymous nodes
       # nodes, other_nodes: All anonymous nodes from this and other
       # hashes: hashes of signature of an anonymous nodes' relevant statements.  Only contains hashes for grounded nodes.
       # potential_hashes: as hashes, but not limited to grounded nodes
       # bijection: node => node mapping representing an anonymous node bijection
       # bijection_hashes: duplicate of hashes from which we remove hashes to make sure bijection is one to one
+     
+      # A grounded node, the difference between the contents of
+      # potential_hashes and hashes, is a node which has no ungrounded
+      # anonymous neighbors in a relevant statement.
+      #
       potential_hashes = {}
       [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
         hash_needed = true
         while hash_needed 
           hash_needed = false
           tuple.last.each do | node |
-            grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
-            if grounded
-              hash_needed = true
-              hashes[node] = hash
+            unless hashes.member? node
+              grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
+              if grounded
+                hash_needed = true
+                hashes[node] = hash
+              end
+              potential_hashes[node] = hash
             end
-            potential_hashes[node] = hash
           end
         end
       end
 
-      # foreach my identifiers, there exists a hash key from the other list of identifiers with the same hash
+      # see variables above
       bijection = {}
-      puts "hashes: #{hashes.inspect}"
       bijection_hashes = hashes.dup
-      nodes.each do | node |
 
-        # we're looking for a node => hash key/value which is an
-        # other_identifier => hash where the hash is the same as this
-        # identifier's
+      # We are looking for nodes such that
+      # hashes[node] == hashes[some_other_node]
+      nodes.each do | node |
         tuple = bijection_hashes.find do |k, v| 
           (v == bijection_hashes[node]) && 
           # eql? instead of include? since RDF.rb coincedentally-same-named identifiers will be ==
