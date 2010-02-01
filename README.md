@@ -3,6 +3,8 @@
 Provides RDF Isomorphism functionality for RDF.rb RDF::Enumerables.  That
 includes RDF::Repository, RDF::Graph, query results, and more.
 
+For more information about RDF.rb, see <http://rdf.rubyforge.org>
+
 ## Synopsis:
 
     require 'rdf/isomorphic'
@@ -56,8 +58,12 @@ libraries.  Try this:
 
 ### Information
  * Author: Ben Lavender <blavender@gmail.com>
- * Source: http://github.com/bhuga/RDF-Isomorphic
- * Issues: http://github.com/bhuga/RDF-Isomorphic/issues
+ * Source: <http://github.com/bhuga/RDF-Isomorphic>
+ * Issues: <http://github.com/bhuga/RDF-Isomorphic/issues>
+
+### See also
+ * RDF.rb: <http://rdf.rubyforge.org>
+ * RDF.rb source: <http://github.com/bendiken/rdf>
 
 ### "License"
 
