@@ -29,20 +29,17 @@ module RDF
 
     protected
 
-    def build_bijection_to(blank_nodes, identifiers, other_blank_nodes, other_identifiers, hashes = {})
+    def build_bijection_to(anon_stmts, identifiers, other_anon_stmts, other_identifiers, hashes = {})
       all_identifiers = []
       potential_hashes = {}
-      identifiers.each do | identifier | 
-        grounded, hash = node_hash_for(identifier,blank_nodes,hashes) unless hashes.member? identifier
-        hashes[identifier] = hash if grounded
-        potential_hashes[identifier] = hash
+      [ [anon_stmts,identifiers], [other_anon_stmts,other_identifiers] ].each do | tuple |
+        tuple.last.each do | identifier | 
+          grounded, hash = node_hash_for(identifier, tuple.first, hashes) unless hashes.member? identifier
+          hashes[identifier] = hash if grounded
+          potential_hashes[identifier] = hash
+        end
       end
-      other_identifiers.each do | identifier | 
-        grounded, hash = node_hash_for(identifier,other_blank_nodes,hashes) unless hashes.member? identifier
-        hashes[identifier] = hash if grounded
-        potential_hashes[identifier] = hash
-      end
-      
+
       # foreach my identifiers, there exists a hash key from the other list of identifiers with the same hash
       bijection = {}
       bijectable = true
@@ -63,15 +60,20 @@ module RDF
       end
       puts "bijection: #{bijection.inspect}"
 
-      # This is the return statement
+      # This is the return statement, believe it or not.
+      # Is the anonymous node mapping 1 to 1?
       if (bijection.keys.sort == identifiers.sort) && (bijection.values.sort == other_identifiers.sort)
         puts "that last bijection?  totally awesome and good."
         bijection
-      #elsif (hashes.keys.sort == identifiers.sort)
+      # If we only have one identifier left that is not hashed, we would have found it if it could work.
+      # So see which ones are in the hash, and if only one is out of it, don't bother trying to recurse.
       elsif (identifiers.find_all do | iden | hashes.member? iden end.size) >= identifiers.size - 1
         puts "collected #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
         puts "cannot reconcile.  false."
         nil
+      # So we've got unhashed nodes that can't be easily matched.  Make
+      # tentative bijection between two with identical triples in the graph and
+      # recurse.
       else
         puts "collected (and ignored) #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
         bijection = nil
@@ -90,7 +92,7 @@ module RDF
             next unless potential_hashes[identifier] == potential_hashes[other_identifier]
             test_hashes = { identifier => hash, other_identifier => hash}
             puts "trying another level of recursion, adding #{test_hashes}"
-            result = build_bijection_to(blank_nodes, identifiers, other_blank_nodes, other_identifiers, hashes.merge(test_hashes))
+            result = build_bijection_to(anon_stmts, identifiers, other_anon_stmts, other_identifiers, hashes.merge(test_hashes))
             puts "that worked! we're done after adding #{test_hashes}" if result
             bijection = result
           end
