@@ -29,70 +29,71 @@ module RDF
 
     protected
 
-    def build_bijection_to(anon_stmts, identifiers, other_anon_stmts, other_identifiers, hashes = {})
-      all_identifiers = []
+    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes = {})
       potential_hashes = {}
-      [ [anon_stmts,identifiers], [other_anon_stmts,other_identifiers] ].each do | tuple |
-        tuple.last.each do | identifier | 
-          grounded, hash = node_hash_for(identifier, tuple.first, hashes) unless hashes.member? identifier
-          hashes[identifier] = hash if grounded
-          potential_hashes[identifier] = hash
+      [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
+        tuple.last.each do | node | 
+          grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
+          hashes[node] = hash if grounded
+          potential_hashes[node] = hash
         end
       end
 
       # foreach my identifiers, there exists a hash key from the other list of identifiers with the same hash
       bijection = {}
-      bijectable = true
       puts "hashes: #{hashes.inspect}"
       bijection_hashes = hashes.dup
-      identifiers.each do | identifier |
+      nodes.each do | node |
+
+        # we're looking for a node => hash key/value which is an
+        # other_identifier => hash where the hash is the same as this
+        # identifier's
         tuple = bijection_hashes.find do |k, v| 
-          (v == bijection_hashes[identifier]) && 
+          (v == bijection_hashes[node]) && 
           # eql? instead of include? since RDF.rb coincedentally-same-named identifiers will be ==
-          other_identifiers.any? do | item | k.eql?(item) end
+          other_nodes.any? do | item | k.eql?(item) end
         end
-        puts "tuple for #{identifier}: #{tuple.inspect}"
+        puts "tuple for #{node}: #{tuple.inspect}"
         next unless tuple
-        (bijectable = false ; break) unless tuple
         target = tuple.first
         bijection_hashes.delete target
-        bijection[identifier] = target
+        bijection[node] = target
       end
       puts "bijection: #{bijection.inspect}"
 
       # This is the return statement, believe it or not.
       # Is the anonymous node mapping 1 to 1?
-      if (bijection.keys.sort == identifiers.sort) && (bijection.values.sort == other_identifiers.sort)
+      if (bijection.keys.sort == nodes.sort) && (bijection.values.sort == other_nodes.sort)
         puts "that last bijection?  totally awesome and good."
         bijection
       # If we only have one identifier left that is not hashed, we would have found it if it could work.
       # So see which ones are in the hash, and if only one is out of it, don't bother trying to recurse.
-      elsif (identifiers.find_all do | iden | hashes.member? iden end.size) >= identifiers.size - 1
-        puts "collected #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
+      elsif (nodes.find_all do | iden | hashes.member? iden end.size) >= nodes.size - 1
+        puts "collected #{nodes.find_all do | iden | hashes.member? iden end.inspect}"
         puts "cannot reconcile.  false."
         nil
       # So we've got unhashed nodes that can't be easily matched.  Make
       # tentative bijection between two with identical triples in the graph and
       # recurse.
       else
-        puts "collected (and ignored) #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
+        puts "collected (and ignored) #{nodes.find_all do | iden | hashes.member? iden end.inspect}"
         bijection = nil
-        identifiers.each do | identifier |
-          puts "checking for #{identifier} in hashes for recursion (#{!(hashes.member?(identifier)) || hashes[identifier].nil?})"
-          # we don't replace grounded identifiers' hashes
-          next if hashes.member? identifier 
+        nodes.each do | node |
+          puts "checking for #{node } in hashes for recursion (#{!(hashes.member?(node)) || hashes[node].nil?})"
+          # we don't replace grounded nodes' hashes
+          next if hashes.member? node
           puts "not found, here we go"
-          hash = Digest::SHA1.hexdigest(identifier.to_s)
-          bijectable = other_identifiers.any? do | other_identifier |
-            # we don't replace grounded identifiers' hashes
-            next if hashes.member? other_identifier
-            puts "is it possible? #{potential_hashes[identifier] == potential_hashes[other_identifier]}"
-            puts "why? #{potential_hashes[identifier]} must ==  #{potential_hashes[other_identifier]}"
+          hash = Digest::SHA1.hexdigest(node.to_s)
+          bijectable = other_nodes.any? do | other_node |
+            # we don't replace grounded nodes' hashes
+            next if hashes.member? other_node
+            puts "is it possible? #{potential_hashes[node] == potential_hashes[other_node]}"
+            puts "why? #{potential_hashes[node]} must ==  #{potential_hashes[other_node]}"
             # don't bother unless its even feasible
-            next unless potential_hashes[identifier] == potential_hashes[other_identifier]
-            test_hashes = { identifier => hash, other_identifier => hash}
+            next unless potential_hashes[node] == potential_hashes[other_node]
+            test_hashes = { node => hash, other_node => hash}
             puts "trying another level of recursion, adding #{test_hashes}"
-            result = build_bijection_to(anon_stmts, identifiers, other_anon_stmts, other_identifiers, hashes.merge(test_hashes))
+            result = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes.merge(test_hashes))
             puts "that worked! we're done after adding #{test_hashes}" if result
             bijection = result
           end
