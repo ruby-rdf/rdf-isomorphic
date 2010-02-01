@@ -6,19 +6,6 @@ module RDF
   module Isomorphic
 
     def isomorphic_with(other)
-      if count != other.count
-        false
-      else
-        bijection_exists(other)
-      end
-    end
-
-    alias_method :isomorphic?, :isomorphic_with
-    alias_method :isomorphic_with?, :isomorphic_with
-
-    protected
-
-    def bijection_exists(other)
       named_statements_match = true
       each_statement do |statement|
         unless statement.has_blank_nodes?
@@ -26,23 +13,25 @@ module RDF
         end
         break unless named_statements_match
       end
-   
-      if named_statements_match
-        blank_nodes = find_all { |statement| statement.has_blank_nodes? }
-        other_blank_nodes = other.find_all { |statement| statement.has_blank_nodes? }
-        can_build_bijection(blank_nodes,other_blank_nodes, 4)
-      else
-        false
-      end
+      named_statements_match && !(bijection_to(other).nil?)
     end
 
-    def can_build_bijection(blank_nodes,other_blank_nodes, safety, hashes = {})
+    alias_method :isomorphic?, :isomorphic_with
+    alias_method :isomorphic_with?, :isomorphic_with
+
+    def bijection_to(other)
+      blank_nodes = find_all { |statement| statement.has_blank_nodes? }
+      other_blank_nodes = other.find_all { |statement| statement.has_blank_nodes? }
+      identifiers = blank_identifiers_in(blank_nodes)
+      other_identifiers = blank_identifiers_in(other_blank_nodes)
+      build_bijection_to blank_nodes, identifiers, other_blank_nodes, other_identifiers
+    end
+
+    protected
+
+    def build_bijection_to(blank_nodes, identifiers, other_blank_nodes, other_identifiers, hashes = {})
       all_identifiers = []
       potential_hashes = {}
-      identifiers = blank_identifiers_in(blank_nodes)
-      puts "identifiers: #{identifiers.inspect}"
-      other_identifiers = blank_identifiers_in(other_blank_nodes)
-      puts "other identifiers: #{other_identifiers.inspect}"
       identifiers.each do | identifier | 
         grounded, hash = node_hash_for(identifier,blank_nodes,hashes) unless hashes.member? identifier
         hashes[identifier] = hash if grounded
@@ -73,20 +62,19 @@ module RDF
         bijection[identifier] = target
       end
       puts "bijection: #{bijection.inspect}"
+
+      # This is the return statement
       if (bijection.keys.sort == identifiers.sort) && (bijection.values.sort == other_identifiers.sort)
         puts "that last bijection?  totally awesome and good."
-        true
+        bijection
       #elsif (hashes.keys.sort == identifiers.sort)
       elsif (identifiers.find_all do | iden | hashes.member? iden end.size) >= identifiers.size - 1
         puts "collected #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
         puts "cannot reconcile.  false."
-        false
-      elsif (safety == 0)
-        puts "false due to safety overflow"
-        false
+        nil
       else
         puts "collected (and ignored) #{identifiers.find_all do | iden | hashes.member? iden end.inspect}"
-        bijectable = false
+        bijection = nil
         identifiers.each do | identifier |
           puts "checking for #{identifier} in hashes for recursion (#{!(hashes.member?(identifier)) || hashes[identifier].nil?})"
           # we don't replace grounded identifiers' hashes
@@ -94,21 +82,22 @@ module RDF
           puts "not found, here we go"
           hash = Digest::SHA1.hexdigest(identifier.to_s)
           bijectable = other_identifiers.any? do | other_identifier |
+            # we don't replace grounded identifiers' hashes
             next if hashes.member? other_identifier
-            # don't bother if there's just no way.
             puts "is it possible? #{potential_hashes[identifier] == potential_hashes[other_identifier]}"
             puts "why? #{potential_hashes[identifier]} must ==  #{potential_hashes[other_identifier]}"
+            # don't bother unless its even feasible
             next unless potential_hashes[identifier] == potential_hashes[other_identifier]
             test_hashes = { identifier => hash, other_identifier => hash}
-            puts "trying another level of recursion, adding #{test_hashes} (safety #{safety})"
-            result = can_build_bijection(blank_nodes,other_blank_nodes,safety-1,hashes.merge(test_hashes))
+            puts "trying another level of recursion, adding #{test_hashes}"
+            result = build_bijection_to(blank_nodes, identifiers, other_blank_nodes, other_identifiers, hashes.merge(test_hashes))
             puts "that worked! we're done after adding #{test_hashes}" if result
-            result
+            bijection = result
           end
-          break if bijectable
+          break if bijection
           puts "that didn't work..."
         end
-        bijectable
+        bijection
       end
     end
 
