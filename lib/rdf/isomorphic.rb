@@ -3,9 +3,31 @@ require 'rdf'
 
 
 module RDF
+  ##
+  # Isomorphism for rdf.rb Enumerables
+  #
+  # RDF::Isomorphic provides the functions isomorphic_with and bijection_to for RDF::Enumerable.
+  #
+  # @see http://rdf.rubyforge.org
+  # @see http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
 
+    # Returns `true` if this RDF::Enumerable is isomorphic with another.
+    # @return [Boolean]
+    # @example
+    #     repository_a.isomorphic_with repository_b #=> true
     def isomorphic_with(other)
+      !(bijection_to(other).nil?)
+    end
+
+    alias_method :isomorphic?, :isomorphic_with
+    alias_method :isomorphic_with?, :isomorphic_with
+
+
+    # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
+    # bijection of this RDF::Enumerable's blank nodes, or nil if a bijection
+    # cannot be found.
+    def bijection_to(other)
       named_statements_match = true
       each_statement do |statement|
         unless statement.has_blank_nodes?
@@ -13,18 +35,16 @@ module RDF
         end
         break unless named_statements_match
       end
-      named_statements_match && !(bijection_to(other).nil?)
-    end
 
-    alias_method :isomorphic?, :isomorphic_with
-    alias_method :isomorphic_with?, :isomorphic_with
-
-    def bijection_to(other)
-      blank_nodes = find_all { |statement| statement.has_blank_nodes? }
-      other_blank_nodes = other.find_all { |statement| statement.has_blank_nodes? }
-      identifiers = blank_identifiers_in(blank_nodes)
-      other_identifiers = blank_identifiers_in(other_blank_nodes)
-      build_bijection_to blank_nodes, identifiers, other_blank_nodes, other_identifiers
+      unless named_statements_match
+        nil
+      else
+        blank_nodes = find_all { |statement| statement.has_blank_nodes? }
+        other_blank_nodes = other.find_all { |statement| statement.has_blank_nodes? }
+        identifiers = blank_identifiers_in(blank_nodes)
+        other_identifiers = blank_identifiers_in(other_blank_nodes)
+        build_bijection_to blank_nodes, identifiers, other_blank_nodes, other_identifiers
+      end
     end
 
     protected
