@@ -1,7 +1,45 @@
 # RDF Isomorphism
 
-Provides RDF Isomorphism for RDF.rb RDF::Enumerables.
+Provides RDF Isomorphism functionality for RDF.rb RDF::Enumerables.  That
+includes RDF::Repository, RDF::Graph, query results, and more.
 
-Totally not ready for prime time yet, but I need this, so if you're interested, stick around.
+Synopsis:
+
+    require 'rdf/isomorphic'
+    require 'rdf/ntriples'
+    a = RDF::Repository.load './tests/isomorphic/test1/test1-1.nt'
+    a.first
+    => #<RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .)>
+    
+    b = RDF::Repository.load './tests/isomorphic/test1/test1-2.nt'
+    b.first
+    => #<RDF::Statement:0xd3801a(<http://example.org/a> <http://example.org/prop> <_:testing> .)>
+
+    a.isomorphic_with? b
+    => true
+    a.bijection_to b
+    => {#<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)>}
+
+Although `==` should perhaps be overwritten, RDF isomorphism is a
+factorial-complexity problem and it seemed better to perhaps not overwrite such
+a commonly used method for that.  But it's really useful for specs in RDF
+libraries.  Try this:
+
+    require 'rdf/isomorphic'
+    module RDF
+      module Isomorphic
+        alias_method :==, :isomorphic_with
+      end
+    end
+    
+    describe 'something' do
+      context 'does' do
+        it 'should be equal' do
+          repository_a.should == repository_b
+        end
+      end
+    end
+
+RDF::Isomorphism is not ready for use yet, but I need this, so if you're interested, stick around.
 
 
