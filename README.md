@@ -30,7 +30,7 @@ it is very similar to the one described by Jeremy Carroll in
 
 Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
 is a specialization of the naive factorial-time test for graph isomorphism,
-wherin non-anonymous RDF data lets us eliminate vast quantities of options well
+wherein non-anonymous RDF data lets us eliminate vast quantities of options well
 before we try them.  Pathological cases, such as graphs which only contain
 anonymous resources, will experience poor performance.
 
