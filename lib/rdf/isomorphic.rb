@@ -178,17 +178,21 @@ module RDF
           end
         end
       end
+      # Note that we sort the signatures--without a canonical ordering, 
+      # we might get different hashes for equivalent nodes.
       [grounded,Digest::SHA1.hexdigest(statement_signatures.sort.to_s)]
     end
 
-    # Provide a string signature for the given statement.
+    # Provide a string signature for the given statement, collecting
+    # string signatures for grounded node elements.
+    # return [String]
     # @private
     def hash_string_for(statement,hashes)
-      hash = ""
-      hash << string_for_node(statement.subject,hashes)
-      hash << statement.predicate.to_s
-      hash << string_for_node(statement.object,hashes)
-      hash
+      string = ""
+      string << string_for_node(statement.subject,hashes)
+      string << statement.predicate.to_s
+      string << string_for_node(statement.object,hashes)
+      string 
     end
 
     # Returns true if a given node is grounded
