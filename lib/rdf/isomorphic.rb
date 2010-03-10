@@ -16,12 +16,11 @@ module RDF
     # @return [Boolean]
     # @example
     #     repository_a.isomorphic_with repository_b #=> true
-    def isomorphic_with(other)
+    def isomorphic_with?(other)
       !(bijection_to(other).nil?)
     end
 
-    alias_method :isomorphic?, :isomorphic_with
-    alias_method :isomorphic_with?, :isomorphic_with
+    alias_method :isomorphic?, :isomorphic_with?
 
 
     # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
@@ -214,7 +213,7 @@ module RDF
   end
 
 
-
+  # Extend RDF::Enumerables with these functions.
   module Enumerable 
     include RDF::Isomorphic
   end

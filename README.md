@@ -44,7 +44,7 @@ libraries.  Try this:
     require 'rdf/isomorphic'
     module RDF
       module Isomorphic
-        alias_method :==, :isomorphic_with
+        alias_method :==, :isomorphic_with?
       end
     end
     
