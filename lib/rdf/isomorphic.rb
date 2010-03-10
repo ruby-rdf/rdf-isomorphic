@@ -192,22 +192,27 @@ module RDF
     end
 
     # Returns true if a given node is grounded
+    # A node is groundd if it is not a blank node or it is included
+    # in the list of grounded nodes.
+    # @return [Boolean]
     # @private
     def grounded(node, hashes)
       (!(node.anonymous?)) || (hashes.member? node)
     end
 
     # Provides a string for the given node for use in a string signature
+    # Non-anonymous nodes will return their string form.  Grounded anonymous
+    # nodes will return their hashed form.
+    # @return [String]
     # @private
     def string_for_node(node, hashes)
-      if node.anonymous?
-        if hashes.member? node
+      case
+        when node.anonymous? && hashes.member?(node)
           hashes[node]
-        else
+        when node.anonymous?
           ""
-        end
-      else
-        node.to_s
+        else
+          node.to_s
       end
     end
   end
