@@ -82,7 +82,7 @@ module RDF
           hash_needed = false
           tuple.last.each do | node |
             unless hashes.member? node
-              grounded, hash = node_hash_for(node, tuple.first, hashes) unless hashes.member? node
+              grounded, hash = node_hash_for(node, tuple.first, hashes)
               if grounded
                 hash_needed = true
                 hashes[node] = hash
@@ -100,10 +100,10 @@ module RDF
       # We are looking for nodes such that
       # hashes[node] == hashes[some_other_node].  This means we can biject the two nodes.
       nodes.each do | node |
-        tuple = bijection_hashes.find do |k, v| 
-          (v == bijection_hashes[node]) && 
+        tuple = bijection_hashes.find do |hashed_node, hash| 
+          (hash == bijection_hashes[node]) && 
           # eql? instead of include? since RDF.rb coincedentally-same-named identifiers will be ==
-          other_nodes.any? do | item | k.eql?(item) end
+          other_nodes.any? do | other_node | hashed_node.eql?(other_node) end
         end
         next unless tuple
         target = tuple.first
