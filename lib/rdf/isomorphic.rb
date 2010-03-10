@@ -58,7 +58,7 @@ module RDF
     #
     # Many more comments are in the method itself.
     # @private
-    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes = {})
+    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {})
 
       # Some variable descriptions:
       # anon_stmts, other_anon_stmts:  All statements from this and other with anonymous nodes
@@ -76,39 +76,20 @@ module RDF
       # they can be the basis for further nodes becoming grounded, so we cycle through the list until
       # we can't ground any more nodes.
       potential_hashes = {}
-      [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
-        hash_needed = true
-        while hash_needed 
-          hash_needed = false
-          tuple.last.each do | node |
-            unless hashes.member? node
-              grounded, hash = node_hash_for(node, tuple.first, hashes)
-              if grounded
-                hash_needed = true
-                hashes[node] = hash
-              end
-              potential_hashes[node] = hash
-            end
-          end
-        end
-      end
+      these_hashes, these_ungrounded_hashes = hash_nodes(anon_stmts, nodes, these_grounded_hashes)
+      other_hashes, other_ungrounded_hashes = hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
+      these_hashes.merge! these_grounded_hashes
+      other_hashes.merge! other_grounded_hashes
 
       # see variables above
       bijection = {}
-      bijection_hashes = hashes.dup
-
-      # We are looking for nodes such that
-      # hashes[node] == hashes[some_other_node].  This means we can biject the two nodes.
       nodes.each do | node |
-        tuple = bijection_hashes.find do |hashed_node, hash| 
-          (hash == bijection_hashes[node]) && 
-          # eql? instead of include? since RDF.rb coincedentally-same-named identifiers will be ==
-          other_nodes.any? do | other_node | hashed_node.eql?(other_node) end
+        other_node, other_hash = other_hashes.find do | other_node, other_hash |
+          these_hashes[node] == other_hash
         end
-        next unless tuple
-        target = tuple.first
-        bijection_hashes.delete target
-        bijection[node] = target
+        next unless other_node
+        bijection[node] = other_node
+        other_hashes.delete other_node
       end
 
       # This if is the return statement, believe it or not.
@@ -124,16 +105,15 @@ module RDF
         bijection = nil
         nodes.each do | node |
           # We don't replace grounded nodes' hashes
-          next if hashes.member? node
-          bijectable = other_nodes.any? do | other_node |
+          next if these_hashes.member? node
+          other_nodes.any? do | other_node |
             # We don't replace grounded nodes' hashes
-            next if hashes.member? other_node
+            next if these_hashes.member? other_node
             # The ungrounded signature must match for this pair to have a chance.
             # If the signature doesn't match, skip it.
-            next unless potential_hashes[node] == potential_hashes[other_node]
+            next unless these_ungrounded_hashes[node] == other_ungrounded_hashes[other_node]
             hash = Digest::SHA1.hexdigest(node.to_s)
-            test_hashes = { node => hash, other_node => hash}
-            bijection = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, hashes.merge(test_hashes))
+            bijection = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_hashes.merge( node => hash), other_hashes.merge(other_node => hash))
           end
           break if bijection
         end
@@ -152,7 +132,29 @@ module RDF
       end
       nodes.uniq
     end
- 
+
+    def hash_nodes(statements, nodes, grounded_hashes)
+      hashes = grounded_hashes.dup
+      potential_hashes = {}
+      hash_needed = true
+      while hash_needed 
+        hash_needed = false
+        nodes.each do | node |
+          unless hashes.member? node
+            grounded, hash = node_hash_for(node, statements, hashes)
+            if grounded
+              hash_needed = true
+              hashes[node] = hash
+            end
+            potential_hashes[node] = hash
+          end
+        end
+      end
+      [hashes,potential_hashes]
+    end
+
+
+
     # Generate a hash for a node based on the signature of the statements it
     # appears in.  Signatures consist of grounded elements in statements
     # associated with a node, that is, anything but an ungrounded anonymous
@@ -172,9 +174,9 @@ module RDF
       grounded = true
       statements.each do | statement |
         if (statement.object == node) || (statement.subject == node)
-          statement_signatures << hash_string_for(statement,hashes)
+          statement_signatures << hash_string_for(statement,hashes,node)
           [statement.subject, statement.object].each do | resource |
-            grounded = false unless grounded(resource, hashes)
+            grounded = false unless grounded(resource, hashes) || resource == node
           end
         end
       end
@@ -187,11 +189,11 @@ module RDF
     # string signatures for grounded node elements.
     # return [String]
     # @private
-    def hash_string_for(statement,hashes)
+    def hash_string_for(statement,hashes,node)
       string = ""
-      string << string_for_node(statement.subject,hashes)
+      string << string_for_node(statement.subject,hashes,node)
       string << statement.predicate.to_s
-      string << string_for_node(statement.object,hashes)
+      string << string_for_node(statement.object,hashes,node)
       string 
     end
 
@@ -209,12 +211,14 @@ module RDF
     # nodes will return their hashed form.
     # @return [String]
     # @private
-    def string_for_node(node, hashes)
+    def string_for_node(node, hashes,target)
       case
+        when node == target
+          "itself"
         when node.anonymous? && hashes.member?(node)
           hashes[node]
         when node.anonymous?
-          ""
+          "a blank node"
         else
           node.to_s
       end
