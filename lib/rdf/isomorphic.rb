@@ -39,8 +39,8 @@ module RDF
       if reified_stmts_match
         blank_stmts = find_all { |statement| statement.has_blank_nodes? }
         other_blank_stmts = other.find_all { |statement| statement.has_blank_nodes? }
-        nodes = blank_nodes_in(blank_stmts)
-        other_nodes = blank_nodes_in(other_blank_stmts)
+        nodes = RDF::Isomorphic.blank_nodes_in(blank_stmts)
+        other_nodes = RDF::Isomorphic.blank_nodes_in(other_blank_stmts)
         build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes
       else
         nil
@@ -76,8 +76,8 @@ module RDF
       # they can be the basis for further nodes becoming grounded, so we cycle through the list until
       # we can't ground any more nodes.
       potential_hashes = {}
-      these_hashes, these_ungrounded_hashes = hash_nodes(anon_stmts, nodes, these_grounded_hashes)
-      other_hashes, other_ungrounded_hashes = hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
+      these_hashes, these_ungrounded_hashes = RDF::Isomorphic.hash_nodes(anon_stmts, nodes, these_grounded_hashes)
+      other_hashes, other_ungrounded_hashes = RDF::Isomorphic.hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
       these_hashes.merge! these_grounded_hashes
       other_hashes.merge! other_grounded_hashes
 
@@ -124,7 +124,7 @@ module RDF
     # @private
     # @return [RDF::Node]
     # Blank nodes appearing in given list of statements
-    def blank_nodes_in(blank_stmt_list)
+    def self.blank_nodes_in(blank_stmt_list)
       nodes = []
       blank_stmt_list.each do | statement |
         nodes << statement.object if statement.object.anonymous?
@@ -133,7 +133,7 @@ module RDF
       nodes.uniq
     end
 
-    def hash_nodes(statements, nodes, grounded_hashes)
+    def self.hash_nodes(statements, nodes, grounded_hashes)
       hashes = grounded_hashes.dup
       potential_hashes = {}
       hash_needed = true
@@ -153,8 +153,6 @@ module RDF
       [hashes,potential_hashes]
     end
 
-
-
     # Generate a hash for a node based on the signature of the statements it
     # appears in.  Signatures consist of grounded elements in statements
     # associated with a node, that is, anything but an ungrounded anonymous
@@ -169,7 +167,7 @@ module RDF
     # for the hash
     # @private
     # @return [Boolean, String]
-    def node_hash_for(node,statements,hashes)
+    def self.node_hash_for(node,statements,hashes)
       statement_signatures = []
       grounded = true
       statements.each do | statement |
@@ -189,7 +187,7 @@ module RDF
     # string signatures for grounded node elements.
     # return [String]
     # @private
-    def hash_string_for(statement,hashes,node)
+    def self.hash_string_for(statement,hashes,node)
       string = ""
       string << string_for_node(statement.subject,hashes,node)
       string << statement.predicate.to_s
@@ -202,7 +200,7 @@ module RDF
     # in the list of grounded nodes.
     # @return [Boolean]
     # @private
-    def grounded(node, hashes)
+    def self.grounded(node, hashes)
       (!(node.anonymous?)) || (hashes.member? node)
     end
 
@@ -211,7 +209,7 @@ module RDF
     # nodes will return their hashed form.
     # @return [String]
     # @private
-    def string_for_node(node, hashes,target)
+    def self.string_for_node(node, hashes,target)
       case
         when node == target
           "itself"
