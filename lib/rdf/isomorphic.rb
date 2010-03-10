@@ -25,30 +25,28 @@ module RDF
 
 
     # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
-    # bijection of this RDF::Enumerable's blank nodes, or nil if a bijection
-    # cannot be found.
+    # bijection of this RDF::Enumerable's to another RDF::Enumerable's blank
+    # nodes, or nil if a bijection cannot be found.
     # @example
     #     repository_a.bijection_to repository_b
     # @param other [RDF::Enumerable]
     # @return [Hash, nil]
     def bijection_to(other)
-      named_statements_match = true
-      each_statement do |statement|
-        unless statement.has_blank_nodes?
-          named_statements_match = other.has_statement?(statement)
-        end
-        break unless named_statements_match
+
+      reified_stmts_match = each_statement.all? do | stmt |
+        stmt.has_blank_nodes? || other.has_statement?(stmt)
       end
 
-      unless named_statements_match
-        nil
-      else
+      if reified_stmts_match
         blank_stmts = find_all { |statement| statement.has_blank_nodes? }
         other_blank_stmts = other.find_all { |statement| statement.has_blank_nodes? }
         nodes = blank_nodes_in(blank_stmts)
         other_nodes = blank_nodes_in(other_blank_stmts)
         build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes
+      else
+        nil
       end
+
     end
 
     private
@@ -74,6 +72,10 @@ module RDF
       # A grounded node, the difference between the contents of
       # potential_hashes and hashes, is a node which has no ungrounded
       # anonymous neighbors in a relevant statement.
+      
+      # First we create a signature hash of each node's relevant neighbors.  As nodes become 'grounded',
+      # they can be the basis for further nodes becoming grounded, so we cycle through the list until
+      # we can't ground any more nodes.
       potential_hashes = {}
       [ [anon_stmts,nodes], [other_anon_stmts,other_nodes] ].each do | tuple |
         hash_needed = true
@@ -97,7 +99,7 @@ module RDF
       bijection_hashes = hashes.dup
 
       # We are looking for nodes such that
-      # hashes[node] == hashes[some_other_node]
+      # hashes[node] == hashes[some_other_node].  This means we can biject the two nodes.
       nodes.each do | node |
         tuple = bijection_hashes.find do |k, v| 
           (v == bijection_hashes[node]) && 
