@@ -32,13 +32,18 @@ module RDF
     # @return [Hash, nil]
     def bijection_to(other)
 
-      reified_stmts_match = each_statement.all? do | stmt |
+      grounded_stmts_match = each_statement.all? do | stmt |
         stmt.has_blank_nodes? || other.has_statement?(stmt)
       end
 
-      if reified_stmts_match
+      if grounded_stmts_match
+        # blank_stmts and other_blank_stmts are just a performance
+        # consideration--we could just as well pass in self and other.  But we
+        # will be iterating over this list quite a bit during the algorithm, so
+        # we break it down to the parts we're interested in.
         blank_stmts = find_all { |statement| statement.has_blank_nodes? }
         other_blank_stmts = other.find_all { |statement| statement.has_blank_nodes? }
+
         nodes = RDF::Isomorphic.blank_nodes_in(blank_stmts)
         other_nodes = RDF::Isomorphic.blank_nodes_in(other_blank_stmts)
         build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes
@@ -57,73 +62,75 @@ module RDF
     # relevant pseudocode.
     #
     # Many more comments are in the method itself.
+    #
+    # @param [RDF::Enumerable]  anon_stmts
+    # @param [Array]            nodes
+    # @param [RDF::Enumerable]  other_anon_stmts
+    # @param [Array]            other_nodes
+    # @param [Hash]             these_grounded_hashes
+    # @param [Hash]             other_grounded_hashes
+    # @return [nil,Hash]
     # @private
     def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {})
 
-      # Some variable descriptions:
-      # anon_stmts, other_anon_stmts:  All statements from this and other with anonymous nodes
-      # nodes, other_nodes: All anonymous nodes from this and other
-      # hashes: hashes of signature of an anonymous nodes' relevant statements.  Only contains hashes for grounded nodes.
-      # potential_hashes: as hashes, but not limited to grounded nodes
-      # bijection: node => node mapping representing an anonymous node bijection
-      # bijection_hashes: duplicate of hashes from which we remove hashes to make sure bijection is one to one
-     
-      # A grounded node, the difference between the contents of
-      # potential_hashes and hashes, is a node which has no ungrounded
-      # anonymous neighbors in a relevant statement.
-      
-      # First we create a signature hash of each node's relevant neighbors.  As nodes become 'grounded',
-      # they can be the basis for further nodes becoming grounded, so we cycle through the list until
-      # we can't ground any more nodes.
-      potential_hashes = {}
+
+      # Create a hash signature of every node, based on the signature of
+      # statements it exists in.  
+      # We also save hashes of nodes that cannot be reliably known; we will use
+      # that information to eliminate possible recursion combinations.
+      # 
+      # Any mappings given in the method parameters are considered grounded.
       these_hashes, these_ungrounded_hashes = RDF::Isomorphic.hash_nodes(anon_stmts, nodes, these_grounded_hashes)
       other_hashes, other_ungrounded_hashes = RDF::Isomorphic.hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
-      these_hashes.merge! these_grounded_hashes
-      other_hashes.merge! other_grounded_hashes
 
-      # see variables above
+
+      # Using the created hashes, map nodes to other_nodes
       bijection = {}
       nodes.each do | node |
         other_node, other_hash = other_hashes.find do | other_node, other_hash |
-          these_hashes[node] == other_hash
+          # we need to use eql?, as coincedentally-named bnode identifiers are == in rdf.rb
+          these_hashes[node].eql? other_hash
         end
         next unless other_node
         bijection[node] = other_node
+        
+        # we need to delete , as we don't want two nodes with the same hash
+        # to be mapped to the same other_node.
         other_hashes.delete other_node
       end
 
-      # This if is the return statement, believe it or not.
+      # bijection is now a mapping of nodes to other_nodes.  If all are
+      # accounted for on both sides, we have a bijection.
       #
-      # First, is the anonymous node mapping 1 to 1?
-      # If so, we have a bijection and are done
-      if (bijection.keys.sort == nodes.sort) && (bijection.values.sort == other_nodes.sort)
-        bijection
-      # So we've got unhashed nodes that can't be definitively grounded.  Make
-      # a tentative bijection between two with identical ungrounded signatures
-      # in the graph and recurse.
-      else
+      # If not, we will speculatively mark pairs with matching ungrounded
+      # hashes as bijected and recurse.
+      unless (bijection.keys.sort == nodes.sort) && (bijection.values.sort == other_nodes.sort)
         bijection = nil
-        nodes.each do | node |
+        nodes.any? do | node |
+
           # We don't replace grounded nodes' hashes
           next if these_hashes.member? node
           other_nodes.any? do | other_node |
-            # We don't replace grounded nodes' hashes
-            next if these_hashes.member? other_node
-            # The ungrounded signature must match for this pair to have a chance.
-            # If the signature doesn't match, skip it.
+
+            # We don't replace grounded other_nodes' hashes
+            next if other_hashes.member? other_node
+
+            # The ungrounded signature must match for this to potentially work
             next unless these_ungrounded_hashes[node] == other_ungrounded_hashes[other_node]
+
             hash = Digest::SHA1.hexdigest(node.to_s)
             bijection = build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_hashes.merge( node => hash), other_hashes.merge(other_node => hash))
           end
-          break if bijection
+          bijection
         end
-        bijection
       end
+
+      bijection
     end
 
+    # Blank nodes appearing in given list of statements
     # @private
     # @return [RDF::Node]
-    # Blank nodes appearing in given list of statements
     def self.blank_nodes_in(blank_stmt_list)
       nodes = []
       blank_stmt_list.each do | statement |
@@ -133,10 +140,29 @@ module RDF
       nodes.uniq
     end
 
+    # Given a set of statements, create a mapping of node => SHA1 for a given
+    # set of blank nodes.  grounded_hashes is a mapping of node => SHA1 pairs
+    # that we will take as a given, and use those to make more specific
+    # signatures of other nodes.  
+    #
+    # Returns a tuple of hashes:  one of grounded hashes, and one of all
+    # hashes.  grounded hashes are based on non-blank nodes and grounded blank
+    # nodes, and can be used to determine if a node's signature matches
+    # another.
+    #
+    # @param [Array] statements 
+    # @param [Array] nodes
+    # @param [Hash] grounded_hashes
+    # @private
+    # @return [Hash, Hash]
     def self.hash_nodes(statements, nodes, grounded_hashes)
       hashes = grounded_hashes.dup
-      potential_hashes = {}
+      ungrounded_hashes = {}
       hash_needed = true
+
+      # We may have to go over the list multiple times.  If a node is marked as
+      # grounded, other nodes can then use it to decide their own state of
+      # grounded.
       while hash_needed 
         hash_needed = false
         nodes.each do | node |
@@ -146,11 +172,11 @@ module RDF
               hash_needed = true
               hashes[node] = hash
             end
-            potential_hashes[node] = hash
+            ungrounded_hashes[node] = hash
           end
         end
       end
-      [hashes,potential_hashes]
+      [hashes,ungrounded_hashes]
     end
 
     # Generate a hash for a node based on the signature of the statements it
@@ -197,7 +223,7 @@ module RDF
 
     # Returns true if a given node is grounded
     # A node is groundd if it is not a blank node or it is included
-    # in the list of grounded nodes.
+    # in the given mapping of grounded nodes.
     # @return [Boolean]
     # @private
     def self.grounded(node, hashes)
