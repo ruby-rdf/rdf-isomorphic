@@ -32,14 +32,14 @@ Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
 is a specialization of the naive factorial-time test for graph isomorphism,
 wherein non-anonymous RDF data lets us eliminate vast quantities of options well
 before we try them.  Pathological cases, such as graphs which only contain
-anonymous resources, will experience poor performance.
+anonymous resources, may experience poor performance.
 
 ### Equality
 
-Although it was considered to provide `==` to mean isomorphic, RDF isomorphism is a
-factorial-complexity problem and it seemed better to perhaps not overwrite such
-a commonly used method for that.  But it's really useful for specs in RDF
-libraries.  Try this:
+Although it was considered to provide `==` to mean isomorphic, RDF isomorphism
+can sometimes be a factorial-complexity problem and it seemed better to perhaps
+not overwrite such a commonly used method for that.  But it's really useful for
+specs in RDF libraries.  Try this in your tests:
 
     require 'rdf/isomorphic'
     module RDF
@@ -67,4 +67,6 @@ libraries.  Try this:
 
 ### "License"
 
-rdf-isomorphic is free and unemcumbered software in the public domain.  For more information, see the accompanying UNLICENSE file or <http://unlicense.org>
+rdf-isomorphic is free and unemcumbered software in the public domain.  For
+more information, see the accompanying UNLICENSE file or <http://unlicense.org>
+
