@@ -1,7 +1,7 @@
 # RDF Isomorphism
 
-Provides RDF Isomorphism functionality for RDF.rb RDF::Enumerables.  That
-includes RDF::Repository, RDF::Graph, query results, and more.
+This is an RDF.rb plugin for RDF Isomorphism functionality for RDF::Enumerables.
+That includes RDF::Repository, RDF::Graph, query results, and more.
 
 For more information about RDF.rb, see <http://rdf.rubyforge.org>
 
