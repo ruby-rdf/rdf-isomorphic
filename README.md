@@ -57,7 +57,8 @@ specs in RDF libraries.  Try this in your tests:
     end
 
 ### Information
- * Author: Ben Lavender <blavender@gmail.com>
+ * Author: Ben Lavender <blavender@gmail.com> - <http://bhuga.net>
+ * Author: Arto Bendiken <arto.bendiken@gmail.com> - <http://ar.to>
  * Source: <http://github.com/bhuga/RDF-Isomorphic>
  * Issues: <http://github.com/bhuga/RDF-Isomorphic/issues>
 

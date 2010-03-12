@@ -15,7 +15,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   EOF
   gem.rubyforge_project  = 'rdf'
 
-  gem.authors            = ['Ben Lavender']
+  gem.authors            = ['Ben Lavender','Arto Bendiken']
   gem.email              = 'blavender@gmail.com'
 
   gem.platform           = Gem::Platform::RUBY
