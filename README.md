@@ -9,24 +9,28 @@ For more information about RDF.rb, see <http://rdf.rubyforge.org>
 
     require 'rdf/isomorphic'
     require 'rdf/ntriples'
+
+
     a = RDF::Repository.load './tests/isomorphic/test1/test1-1.nt'
     a.first
-    => < RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .) >
+    # < RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .) >
     
     b = RDF::Repository.load './tests/isomorphic/test1/test1-2.nt'
     b.first
-    => < RDF::Statement:0xd3801a(<http://example.org/a> <http://example.org/prop> <_:testing> .) >
+    # < RDF::Statement:0xd3801a(<http://example.org/a> <http://example.org/prop> <_:testing> .) >
 
     a.isomorphic_with? b
-    => true
+    # true
+
     a.bijection_to b
-    => { #<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)> }
+    # { #<RDF::Node:0xd345a0(_:abc)>=>#<RDF::Node:0xd38574(_:testing)> }
+
 
 ## Algorithm
 
-More discussion on the algorithm used will be in a forthcoming blog post, but
-it is very similar to the one described by Jeremy Carroll in
-<http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.
+The algorithm used here is very similar to the one described by Jeremy Carroll
+in <http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.  See
+<http://blog.datagraph.org/2010/03/rdf-isomorphism>.
 
 Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
 is a specialization of the naive factorial-time test for graph isomorphism,
