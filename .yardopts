@@ -1,4 +1,4 @@
---title "RDF::Isomorphic - Graph Bijections and Isomorphism for RDF.rb"
+--title "RDF::Isomorphic - RDF.rb plugin for graph bijections and isomorphic equivalence"
 --output-dir doc/yard
 --protected
 --no-private
