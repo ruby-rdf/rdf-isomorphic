@@ -8,18 +8,18 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://rdf.rubyforge.org/'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
-  gem.summary            = 'Graph bijections and isomorphic equivalence for rdf.rb'
+  gem.summary            = 'Graph bijections and isomorphic equivalence for RDF.rb.'
   gem.description = <<-EOF
-    rdf-isomorphic provides bijections mapping blank nodes from one
+    RDF.rb plugin that provides bijections mapping blank nodes from one
     RDF::Enumerable to another, and thus equivalence (isomorphism) testing.
-    EOF
-  gem.rubyforge_project  = 'rdf-isomorphic'
+  EOF
+  gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender']
   gem.email              = 'blavender@gmail.com'
 
   gem.platform           = Gem::Platform::RUBY
-  gem.files              = %w(AUTHORS README UNLICENSE VERSION README.md) + Dir.glob('lib/**/*.rb')
+  gem.files              = %w(AUTHORS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
   gem.bindir             = %q(bin)
   gem.executables        = %w()
   gem.default_executable = gem.executables.first
@@ -30,8 +30,9 @@ GEMSPEC = Gem::Specification.new do |gem|
 
   gem.required_ruby_version      = '>= 1.8.2'
   gem.requirements               = []
-  gem.add_dependency             'rdf', '>= 0.1.0'
-  gem.add_development_dependency 'rspec', '>= 1.2.9'
-  gem.add_development_dependency 'yard' , '>= 0.5.2'
+  gem.add_runtime_dependency     'rdf',      '>= 0.1.0'
+  gem.add_development_dependency 'rdf-spec', '>= 0.1.0'
+  gem.add_development_dependency 'rspec',    '>= 1.3.0'
+  gem.add_development_dependency 'yard' ,    '>= 0.5.3'
   gem.post_install_message       = nil
 end
