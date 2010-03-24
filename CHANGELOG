@@ -1,3 +1,6 @@
-Changes for 0.2.0:
+Changes for 0.1.2:
+  * Fixed a bug where subgraphs would incorrectly identify as isomorphic with
+	a supergraph if no blank nodes were involved with either.
+Changes for 0.1.1:
   * Improved signature algorithm reduces required rounds in some cases
   * Improved documentation significantly
