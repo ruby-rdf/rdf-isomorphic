@@ -32,7 +32,7 @@ module RDF
     # @return [Hash, nil]
     def bijection_to(other)
 
-      grounded_stmts_match = (size == other.size)
+      grounded_stmts_match = (count == other.count)
 
       grounded_stmts_match &&= each_statement.all? do | stmt |
         stmt.has_blank_nodes? || other.has_statement?(stmt)
