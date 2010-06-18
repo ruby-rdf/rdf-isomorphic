@@ -256,5 +256,7 @@ module RDF
   module Enumerable 
     include RDF::Isomorphic
   end
+
+  autoload :VERSION,  'rdf/isomorphic/version'
 end
 
