@@ -1,3 +1,7 @@
+Changes for 0.2.0:
+  * Switch to using #node? instead of #anonymous? throughout.
+	* Switch to using #count instead of #size, which will be defined on 
+	  RDF::Enumerables which do not implement RDF::Countable via ::Enumerator
 Changes for 0.1.2:
   * Fixed a bug where subgraphs would incorrectly identify as isomorphic with
 	a supergraph if no blank nodes were involved with either.
