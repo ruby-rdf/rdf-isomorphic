@@ -136,8 +136,8 @@ module RDF
     def self.blank_nodes_in(blank_stmt_list)
       nodes = []
       blank_stmt_list.each do | statement |
-        nodes << statement.object if statement.object.anonymous?
-        nodes << statement.subject if statement.subject.anonymous?
+        nodes << statement.object if statement.object.node?
+        nodes << statement.subject if statement.subject.node?
       end
       nodes.uniq
     end
@@ -229,7 +229,7 @@ module RDF
     # @return [Boolean]
     # @private
     def self.grounded(node, hashes)
-      (!(node.anonymous?)) || (hashes.member? node)
+      (!(node.node?)) || (hashes.member? node)
     end
 
     # Provides a string for the given node for use in a string signature
@@ -241,9 +241,9 @@ module RDF
       case
         when node == target
           "itself"
-        when node.anonymous? && hashes.member?(node)
+        when node.node? && hashes.member?(node)
           hashes[node]
-        when node.anonymous?
+        when node.node?
           "a blank node"
         else
           node.to_s
