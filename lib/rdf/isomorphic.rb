@@ -1,5 +1,6 @@
 require 'digest/sha1'
 require 'rdf'
+require 'rdf/ntriples'
 
 
 module RDF
@@ -75,7 +76,6 @@ module RDF
     # @private
     def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {})
 
-
       # Create a hash signature of every node, based on the signature of
       # statements it exists in.  
       # We also save hashes of nodes that cannot be reliably known; we will use
@@ -85,20 +85,31 @@ module RDF
       these_hashes, these_ungrounded_hashes = RDF::Isomorphic.hash_nodes(anon_stmts, nodes, these_grounded_hashes)
       other_hashes, other_ungrounded_hashes = RDF::Isomorphic.hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
 
+      # Grounded hashes are built at the same rate between the two graphs (if
+      # they are isomorphic).  If there exists a grounded node in one that is
+      # not in the other, we can just return.  Ungrounded nodes might still
+      # conflict, so we don't check them.  This is a little bit messy in the
+      # middle of the method, and probably slows down isomorphic checks,  but
+      # prevents almost-isomorphic cases from getting nutty.
+      return nil if these_hashes.values.any? { |hash|
+      !(other_hashes.values.member?(hash)) }
+      return nil if other_hashes.values.any? { |hash| !(these_hashes.values.member?(hash)) }
 
       # Using the created hashes, map nodes to other_nodes
+      # Ungrounded hashes will also be equal, but we keep the distinction
+      # around for when we recurse later (we only recurse on ungrounded nodes)
       bijection = {}
       nodes.each do | node |
-        other_node, other_hash = other_hashes.find do | other_node, other_hash |
+        other_node, other_hash = other_ungrounded_hashes.find do | other_node, other_hash |
           # we need to use eql?, as coincedentally-named bnode identifiers are == in rdf.rb
-          these_hashes[node].eql? other_hash
+          these_ungrounded_hashes[node].eql? other_hash
         end
         next unless other_node
         bijection[node] = other_node
-        
-        # we need to delete , as we don't want two nodes with the same hash
-        # to be mapped to the same other_node.
-        other_hashes.delete other_node
+
+        # Deletion is required to keep counts even; two nodes with identical
+        # signatures can biject to each other at random.
+        other_ungrounded_hashes.delete other_node
       end
 
       # bijection is now a mapping of nodes to other_nodes.  If all are
@@ -166,17 +177,26 @@ module RDF
       # grounded, other nodes can then use it to decide their own state of
       # grounded.
       while hash_needed 
-        hash_needed = false
+        starting_grounded_nodes = hashes.size
         nodes.each do | node |
           unless hashes.member? node
             grounded, hash = node_hash_for(node, statements, hashes)
             if grounded
-              hash_needed = true
               hashes[node] = hash
             end
             ungrounded_hashes[node] = hash
           end
         end
+        # after going over the list, any nodes with a unique hash can be marked
+        # as grounded, even if we have not tied them back to a root yet.
+        uniques = {}
+        ungrounded_hashes.each do |node, hash|
+          uniques[hash] = uniques[hash].is_a?(RDF::Node) ? false : node
+        end
+        uniques.each do |hash, node|
+          hashes[node] = hash unless node == false
+        end
+        hash_needed = starting_grounded_nodes != hashes.size
       end
       [hashes,ungrounded_hashes]
     end
@@ -245,6 +265,10 @@ module RDF
           hashes[node]
         when node.node?
           "a blank node"
+        # RDF.rb auto-boxing magic makes some literals the same when they
+        # should not be; the ntriples serializer will take care of us
+        when node.literal?
+          node.class.name + RDF::NTriples.serialize(node)
         else
           node.to_s
       end
