@@ -14,11 +14,19 @@ module RDF
   module Isomorphic
 
     # Returns `true` if this RDF::Enumerable is isomorphic with another.
+    #
+    # Takes a :canonicalize => true argument.  If true, RDF::Literals will be
+    # canonicalized while producing a bijection.  This results in broader
+    # matches for isomorphism in the case of equivalent literals with different
+    # representations.
+    #
+    # @param opts [Hash<Symbol => Any>] options
+    # @param other [RDF::Enumerable]
     # @return [Boolean]
     # @example
     #     repository_a.isomorphic_with repository_b #=> true
-    def isomorphic_with?(other)
-      !(bijection_to(other).nil?)
+    def isomorphic_with?(other, opts = {})
+      !(bijection_to(other, opts).nil?)
     end
 
     alias_method :isomorphic?, :isomorphic_with?
@@ -27,12 +35,19 @@ module RDF
     # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
     # bijection of this RDF::Enumerable's to another RDF::Enumerable's blank
     # nodes, or nil if a bijection cannot be found.
+    #
+    # Takes a :canonicalize => true argument.  If true, RDF::Literals will be
+    # canonicalized while producing a bijection.  This results in broader
+    # matches for isomorphism in the case of equivalent literals with different
+    # representations.
+    #
     # @example
     #     repository_a.bijection_to repository_b
     # @param other [RDF::Enumerable]
+    # @param opts [Hash<Symbol => Any>] options
     # @return [Hash, nil]
-    def bijection_to(other)
-
+    def bijection_to(other, opts = {})
+      
       grounded_stmts_match = (count == other.count)
 
       grounded_stmts_match &&= each_statement.all? do | stmt |
@@ -49,7 +64,7 @@ module RDF
 
         nodes = RDF::Isomorphic.blank_nodes_in(blank_stmts)
         other_nodes = RDF::Isomorphic.blank_nodes_in(other_blank_stmts)
-        build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes
+        build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes, {}, {}, opts
       else
         nil
       end
@@ -72,9 +87,10 @@ module RDF
     # @param [Array]            other_nodes
     # @param [Hash]             these_grounded_hashes
     # @param [Hash]             other_grounded_hashes
+    # @param [Hash]             options
     # @return [nil,Hash]
     # @private
-    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {})
+    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {}, opts = {})
 
       # Create a hash signature of every node, based on the signature of
       # statements it exists in.  
@@ -82,8 +98,8 @@ module RDF
       # that information to eliminate possible recursion combinations.
       # 
       # Any mappings given in the method parameters are considered grounded.
-      these_hashes, these_ungrounded_hashes = RDF::Isomorphic.hash_nodes(anon_stmts, nodes, these_grounded_hashes)
-      other_hashes, other_ungrounded_hashes = RDF::Isomorphic.hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes)
+      these_hashes, these_ungrounded_hashes = RDF::Isomorphic.hash_nodes(anon_stmts, nodes, these_grounded_hashes, opts[:canonicalize])
+      other_hashes, other_ungrounded_hashes = RDF::Isomorphic.hash_nodes(other_anon_stmts, other_nodes, other_grounded_hashes, opts[:canonicalize])
 
       # Grounded hashes are built at the same rate between the two graphs (if
       # they are isomorphic).  If there exists a grounded node in one that is
@@ -168,7 +184,7 @@ module RDF
     # @param [Hash] grounded_hashes
     # @private
     # @return [Hash, Hash]
-    def self.hash_nodes(statements, nodes, grounded_hashes)
+    def self.hash_nodes(statements, nodes, grounded_hashes, canonicalize = false)
       hashes = grounded_hashes.dup
       ungrounded_hashes = {}
       hash_needed = true
@@ -180,7 +196,7 @@ module RDF
         starting_grounded_nodes = hashes.size
         nodes.each do | node |
           unless hashes.member? node
-            grounded, hash = node_hash_for(node, statements, hashes)
+            grounded, hash = node_hash_for(node, statements, hashes, canonicalize)
             if grounded
               hashes[node] = hash
             end
@@ -215,12 +231,12 @@ module RDF
     # for the hash
     # @private
     # @return [Boolean, String]
-    def self.node_hash_for(node,statements,hashes)
+    def self.node_hash_for(node, statements, hashes, canonicalize)
       statement_signatures = []
       grounded = true
       statements.each do | statement |
         if (statement.object == node) || (statement.subject == node)
-          statement_signatures << hash_string_for(statement,hashes,node)
+          statement_signatures << hash_string_for(statement, hashes, node, canonicalize)
           [statement.subject, statement.object].each do | resource |
             grounded = false unless grounded(resource, hashes) || resource == node
           end
@@ -235,11 +251,11 @@ module RDF
     # string signatures for grounded node elements.
     # return [String]
     # @private
-    def self.hash_string_for(statement,hashes,node)
+    def self.hash_string_for(statement, hashes, node, canonicalize)
       string = ""
-      string << string_for_node(statement.subject,hashes,node)
+      string << string_for_node(statement.subject, hashes, node, canonicalize)
       string << statement.predicate.to_s
-      string << string_for_node(statement.object,hashes,node)
+      string << string_for_node(statement.object, hashes, node, canonicalize)
       string 
     end
 
@@ -257,7 +273,7 @@ module RDF
     # nodes will return their hashed form.
     # @return [String]
     # @private
-    def self.string_for_node(node, hashes,target)
+    def self.string_for_node(node, hashes,target, canonicalize)
       case
         when node == target
           "itself"
@@ -268,7 +284,7 @@ module RDF
         # RDF.rb auto-boxing magic makes some literals the same when they
         # should not be; the ntriples serializer will take care of us
         when node.literal?
-          node.class.name + RDF::NTriples.serialize(node)
+          node.class.name + RDF::NTriples.serialize(canonicalize ? node.canonicalize : node)
         else
           node.to_s
       end
