@@ -1,3 +1,6 @@
+Changes for 0.3.1:
+  * Gemspec fixes, relaxing version requirements
+	* Added :canonicalize option, which canonicalizes literals during comparison
 Changes for 0.3.0:
   * More aggressive marking of nodes as grounded with some checks to
 	  explicitly check for non-isomorphism.  The result is a vast performance
