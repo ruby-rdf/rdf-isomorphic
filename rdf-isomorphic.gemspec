@@ -1,9 +1,11 @@
 #!/usr/bin/env ruby -rubygems
 # -*- encoding: utf-8 -*-
+$:.unshift File.expand_path('../lib', __FILE__)
+require 'rdf/isomorphic/version'
 
 GEMSPEC = Gem::Specification.new do |gem|
-  gem.version            = File.read('VERSION').chomp
-  gem.date               = File.mtime('VERSION').strftime('%Y-%m-%d')
+  gem.version            = RDF::Isomorphic::VERSION.to_s
+  gem.date               = Time.now.strftime('%Y-%m-%d')
 
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://rdf.rubyforge.org/'
@@ -29,7 +31,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.requirements               = []
   gem.add_runtime_dependency     'rdf',      '>= 0.2.3'
   gem.add_development_dependency 'rdf-spec', '>= 0.2.0'
-  gem.add_development_dependency 'rspec',    '~> 1.3.0'
+  gem.add_development_dependency 'rspec',    '~> 2.1.0'
   gem.add_development_dependency 'yard' ,    '>= 0.5.3'
   gem.post_install_message       = nil
 end
