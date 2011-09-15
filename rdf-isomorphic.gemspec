@@ -18,7 +18,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.email              = 'blavender@gmail.com'
 
   gem.platform           = Gem::Platform::RUBY
-  gem.files              = %w(AUTHORS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
+  gem.files              = %w(AUTHORS README UNLICENSE) + Dir.glob('lib/**/*.rb')
   gem.bindir             = %q(bin)
   gem.executables        = %w()
   gem.default_executable = gem.executables.first
@@ -29,9 +29,9 @@ GEMSPEC = Gem::Specification.new do |gem|
 
   gem.required_ruby_version      = '>= 1.8.2'
   gem.requirements               = []
-  gem.add_runtime_dependency     'rdf',      '>= 0.2.3'
+  gem.add_runtime_dependency     'rdf',      '>= 0.3.4'
   gem.add_development_dependency 'rdf-spec', '>= 0.2.0'
-  gem.add_development_dependency 'rspec',    '~> 2.1.0'
+  gem.add_development_dependency 'rspec',    '>= 0.3.4'
   gem.add_development_dependency 'yard' ,    '>= 0.5.3'
   gem.post_install_message       = nil
 end
