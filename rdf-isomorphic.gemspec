@@ -8,17 +8,17 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.date               = Time.now.strftime('%Y-%m-%d')
 
   gem.name               = 'rdf-isomorphic'
-  gem.homepage           = 'http://rdf.rubyforge.org/'
+  gem.homepage           = 'http://github.com/ruby-rdf/rdf-isomorphic'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
   gem.description        = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
   gem.summary            = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
   gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender','Arto Bendiken']
-  gem.email              = 'blavender@gmail.com'
+  gem.email              = 'public-rdf-ruby@w3.org'
 
   gem.platform           = Gem::Platform::RUBY
-  gem.files              = %w(AUTHORS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
+  gem.files              = %w(AUTHORS README UNLICENSE) + Dir.glob('lib/**/*.rb')
   gem.bindir             = %q(bin)
   gem.executables        = %w()
   gem.default_executable = gem.executables.first
@@ -29,9 +29,9 @@ GEMSPEC = Gem::Specification.new do |gem|
 
   gem.required_ruby_version      = '>= 1.8.2'
   gem.requirements               = []
-  gem.add_runtime_dependency     'rdf',      '>= 0.2.3'
+  gem.add_runtime_dependency     'rdf',      '>= 0.3.4'
   gem.add_development_dependency 'rdf-spec', '>= 0.2.0'
-  gem.add_development_dependency 'rspec',    '~> 2.1.0'
+  gem.add_development_dependency 'rspec',    '>= 0.3.4'
   gem.add_development_dependency 'yard' ,    '>= 0.5.3'
   gem.post_install_message       = nil
 end
