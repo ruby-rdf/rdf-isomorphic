@@ -1,11 +1,9 @@
 #!/usr/bin/env ruby -rubygems
 # -*- encoding: utf-8 -*-
-$:.unshift File.expand_path('../lib', __FILE__)
-require 'rdf/isomorphic/version'
 
 GEMSPEC = Gem::Specification.new do |gem|
-  gem.version            = RDF::Isomorphic::VERSION.to_s
-  gem.date               = Time.now.strftime('%Y-%m-%d')
+  gem.version            = File.read('VERSION').chomp
+  gem.date               = File.mtime('VERSION').strftime('%Y-%m-%d')
 
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://github.com/ruby-rdf/rdf-isomorphic'
@@ -18,7 +16,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.email              = 'public-rdf-ruby@w3.org'
 
   gem.platform           = Gem::Platform::RUBY
-  gem.files              = %w(AUTHORS README UNLICENSE) + Dir.glob('lib/**/*.rb')
+  gem.files              = %w(AUTHORS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
   gem.bindir             = %q(bin)
   gem.executables        = %w()
   gem.default_executable = gem.executables.first
@@ -29,9 +27,9 @@ GEMSPEC = Gem::Specification.new do |gem|
 
   gem.required_ruby_version      = '>= 1.8.2'
   gem.requirements               = []
-  gem.add_runtime_dependency     'rdf',      '>= 0.3.4'
-  gem.add_development_dependency 'rdf-spec', '>= 0.2.0'
-  gem.add_development_dependency 'rspec',    '>= 0.3.4'
-  gem.add_development_dependency 'yard' ,    '>= 0.5.3'
+  gem.add_runtime_dependency     'rdf',      '>= 1.0'
+  gem.add_development_dependency 'rdf-spec', '>= 1.0'
+  gem.add_development_dependency 'rspec',    '>= 2.12.0'
+  gem.add_development_dependency 'yard' ,    '>= 0.8.3'
   gem.post_install_message       = nil
 end
