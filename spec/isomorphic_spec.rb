@@ -1,10 +1,4 @@
-
-
-$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '..','/lib')))
-# development version of rdf, if available
-$:.unshift(File.expand_path(File.join(File.dirname(__FILE__), '../' '../', 'rdf', 'lib' )))
-
-require 'rdf'
+require File.join(File.dirname(__FILE__), 'spec_helper.rb')
 require 'rdf/isomorphic'
 require 'rdf/ntriples'
 
