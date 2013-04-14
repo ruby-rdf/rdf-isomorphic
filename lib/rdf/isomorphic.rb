@@ -12,6 +12,7 @@ module RDF
   # @see http://ruby-rdf.github.com/rdf
   # @see http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
+    autoload :VERSION,        'rdf/isomorphic/version'
 
     # Returns `true` if this RDF::Enumerable is isomorphic with another.
     #
