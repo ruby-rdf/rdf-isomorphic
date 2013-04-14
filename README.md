@@ -5,6 +5,8 @@ That includes RDF::Repository, RDF::Graph, query results, and more.
 
 For more information about RDF.rb, see <http://rdf.rubyforge.org>
 
+[![Build Status](https://travis-ci.org/ruby-rdf/rdf-isomorphic.png?branch=master)](https://travis-ci.org/ruby-rdf/rdf-isomorphic)
+
 ## Synopsis:
 
     require 'rdf/isomorphic'
