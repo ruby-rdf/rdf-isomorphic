@@ -9,7 +9,7 @@ module RDF
   #
   # RDF::Isomorphic provides the functions isomorphic_with and bijection_to for RDF::Enumerable.
   #
-  # @see http://rdf.rubyforge.org
+  # @see http://ruby-rdf.github.com/rdf
   # @see http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
 
@@ -47,7 +47,7 @@ module RDF
     # @param opts [Hash<Symbol => Any>] options
     # @return [Hash, nil]
     def bijection_to(other, opts = {})
-      
+
       grounded_stmts_match = (count == other.count)
 
       grounded_stmts_match &&= each_statement.all? do | stmt |
@@ -107,8 +107,7 @@ module RDF
       # conflict, so we don't check them.  This is a little bit messy in the
       # middle of the method, and probably slows down isomorphic checks,  but
       # prevents almost-isomorphic cases from getting nutty.
-      return nil if these_hashes.values.any? { |hash|
-      !(other_hashes.values.member?(hash)) }
+      return nil if these_hashes.values.any? { |hash| !(other_hashes.values.member?(hash)) }
       return nil if other_hashes.values.any? { |hash| !(these_hashes.values.member?(hash)) }
 
       # Using the created hashes, map nodes to other_nodes
@@ -192,7 +191,7 @@ module RDF
       # We may have to go over the list multiple times.  If a node is marked as
       # grounded, other nodes can then use it to decide their own state of
       # grounded.
-      while hash_needed 
+      while hash_needed
         starting_grounded_nodes = hashes.size
         nodes.each do | node |
           unless hashes.member? node
@@ -207,10 +206,10 @@ module RDF
         # as grounded, even if we have not tied them back to a root yet.
         uniques = {}
         ungrounded_hashes.each do |node, hash|
-          uniques[hash] = uniques[hash].is_a?(RDF::Node) ? false : node
+          uniques[hash] = uniques.has_key?(hash) ? false : node
         end
         uniques.each do |hash, node|
-          hashes[node] = hash unless node == false
+          hashes[node] = hash if node
         end
         hash_needed = starting_grounded_nodes != hashes.size
       end
@@ -238,7 +237,7 @@ module RDF
         if (statement.object == node) || (statement.subject == node)
           statement_signatures << hash_string_for(statement, hashes, node, canonicalize)
           [statement.subject, statement.object].each do | resource |
-            grounded = false unless grounded(resource, hashes) || resource == node
+            grounded = false unless grounded?(resource, hashes) || resource == node
           end
         end
       end
@@ -264,7 +263,7 @@ module RDF
     # in the given mapping of grounded nodes.
     # @return [Boolean]
     # @private
-    def self.grounded(node, hashes)
+    def self.grounded?(node, hashes)
       (!(node.node?)) || (hashes.member? node)
     end
 

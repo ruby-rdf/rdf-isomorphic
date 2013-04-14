@@ -1,4 +1,4 @@
-source :rubygems
+source "https://rubygems.org"
 
 gemspec
 
@@ -8,5 +8,5 @@ gem "rdf-spec", :git => "git://github.com/ruby-rdf/rdf-spec.git"
 group :development do
   gem 'shotgun'
   gem "wirble"
-  gem "debugger"
+  gem "debugger", :platforms => :ruby_19
 end
