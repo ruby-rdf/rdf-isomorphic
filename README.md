@@ -5,6 +5,7 @@ That includes RDF::Repository, RDF::Graph, query results, and more.
 
 For more information about RDF.rb, see <http://rdf.rubyforge.org>
 
+[![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)][gem]
 [![Build Status](https://travis-ci.org/ruby-rdf/rdf-isomorphic.png)](https://travis-ci.org/ruby-rdf/rdf-isomorphic)
 
 ## Synopsis:
