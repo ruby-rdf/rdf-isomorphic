@@ -9,7 +9,7 @@ module RDF
   #
   # RDF::Isomorphic provides the functions isomorphic_with and bijection_to for RDF::Enumerable.
   #
-  # @see http://ruby-rdf.github.com/rdf
+  # @see http://rdf.rubyforge.org
   # @see http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
     autoload :VERSION,        'rdf/isomorphic/version'
@@ -159,14 +159,10 @@ module RDF
 
     # Blank nodes appearing in given list of statements
     # @private
-    # @return [RDF::Node]
+    # @param [Array<RDF::Statement>] blank_stmt_list
+    # @return [Array<RDF::Node>]
     def self.blank_nodes_in(blank_stmt_list)
-      nodes = []
-      blank_stmt_list.each do | statement |
-        nodes << statement.object if statement.object.node?
-        nodes << statement.subject if statement.subject.node?
-      end
-      nodes.uniq
+      blank_stmt_list.map {|statement | statement.to_quad.compact.select(&:node?)}.flatten.uniq
     end
 
     # Given a set of statements, create a mapping of node => SHA1 for a given
@@ -230,14 +226,18 @@ module RDF
     # Returns a tuple consisting of grounded being true or false and the String
     # for the hash
     # @private
+    # @param [RDF::Node] node
+    # @param [Array<RDF::Statement>] statements
+    # @param [Hash] hashes
+    # @param [Boolean] canonicalize
     # @return [Boolean, String]
     def self.node_hash_for(node, statements, hashes, canonicalize)
       statement_signatures = []
       grounded = true
       statements.each do | statement |
-        if (statement.object == node) || (statement.subject == node)
+        if statement.to_quad.include?(node)
           statement_signatures << hash_string_for(statement, hashes, node, canonicalize)
-          [statement.subject, statement.object].each do | resource |
+          statement.to_quad.compact.each do | resource |
             grounded = false unless grounded?(resource, hashes) || resource == node
           end
         end
@@ -252,11 +252,7 @@ module RDF
     # return [String]
     # @private
     def self.hash_string_for(statement, hashes, node, canonicalize)
-      string = ""
-      string << string_for_node(statement.subject, hashes, node, canonicalize)
-      string << statement.predicate.to_s
-      string << string_for_node(statement.object, hashes, node, canonicalize)
-      string 
+      statement.to_quad.map {|r| string_for_node(r, hashes, node, canonicalize)}.join("")
     end
 
     # Returns true if a given node is grounded
@@ -275,6 +271,8 @@ module RDF
     # @private
     def self.string_for_node(node, hashes,target, canonicalize)
       case
+        when node.nil?
+          ""
         when node == target
           "itself"
         when node.node? && hashes.member?(node)
@@ -296,7 +294,5 @@ module RDF
   module Enumerable 
     include RDF::Isomorphic
   end
-
-  autoload :VERSION,  'rdf/isomorphic/version'
 end
 
