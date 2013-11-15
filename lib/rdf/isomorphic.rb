@@ -88,7 +88,7 @@ module RDF
     # @param [Array]            other_nodes
     # @param [Hash]             these_grounded_hashes
     # @param [Hash]             other_grounded_hashes
-    # @param [Hash]             options
+    # @param [Hash]             opts
     # @return [nil,Hash]
     # @private
     def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {}, opts = {})
