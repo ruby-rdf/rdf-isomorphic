@@ -8,8 +8,8 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://ruby-rdf.github.com/rdf-isomorphic'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
-  gem.description        = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
-  gem.summary            = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
+  gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
+  gem.summary            = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
   gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender','Arto Bendiken']
