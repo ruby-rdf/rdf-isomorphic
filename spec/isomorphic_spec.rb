@@ -17,15 +17,15 @@ describe RDF::Isomorphic do
 
   it "should extend RDF::Enumerable" do
     repo = RDF::Repository.new
-    repo.should be_a RDF::Enumerable
-    repo.should be_a RDF::Isomorphic
+    expect(repo).to be_a RDF::Enumerable
+    expect(repo).to be_a RDF::Isomorphic
   end
 
   context "when comparing isomorphic enumerables" do
     tests[:isomorphic].keys.each do | test_number |
       it "should find all enumerables associated with #{test_number} isomorphic" do
         first, second = tests[:isomorphic][test_number].map {|t| RDF::Repository.load(t)}
-        first.should be_isomorphic_with second
+        expect(first).to be_isomorphic_with second
       end
     end
   end
@@ -34,7 +34,7 @@ describe RDF::Isomorphic do
     tests[:non_isomorphic].keys.each do | test_number |
       it "should find enumerables from #{test_number} non-isomorphic" do
         first, second = tests[:non_isomorphic][test_number].map {|t| RDF::Repository.load(t)}
-        first.should_not be_isomorphic_with second
+        expect(first).not_to be_isomorphic_with second
       end
     end
   end
