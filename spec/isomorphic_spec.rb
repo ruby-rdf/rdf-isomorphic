@@ -38,6 +38,10 @@ describe RDF::Isomorphic do
       end
     end
   end
+end
 
-
+describe RDF::Enumerable::Enumerator do
+  it "includes behavior from RDF::Isomorphic" do
+    expect(RDF::Enumerable::Enumerator < RDF::Isomorphic).to be_truthy
+  end
 end
