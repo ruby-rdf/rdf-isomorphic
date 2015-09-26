@@ -8,8 +8,8 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://ruby-rdf.github.com/rdf-isomorphic'
   gem.license            = 'Public Domain' if gem.respond_to?(:license=)
-  gem.description        = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
-  gem.summary            = 'RDF.rb plugin for graph bijections and isomorphic equivalence.'
+  gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
+  gem.summary            = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
   gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender','Arto Bendiken']
@@ -25,17 +25,12 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.test_files         = %w()
   gem.has_rdoc           = false
 
-  gem.required_ruby_version      = '>= 1.9.2'
+  gem.required_ruby_version      = '>= 1.9.3'
   gem.requirements               = []
-  gem.add_runtime_dependency     'rdf',      '>= 1.1'
-  gem.add_development_dependency 'rdf-spec', '>= 1.1'
-  gem.add_development_dependency 'rspec',    '>= 2.14.0'
-  gem.add_development_dependency 'yard' ,    '>= 0.8.7'
-
-  # Rubinius has it's own dependencies
-  if RUBY_ENGINE == "rbx" && RUBY_VERSION >= "2.1.0"
-    gem.add_development_dependency "rubysl-prettyprint"
-  end
+  gem.add_runtime_dependency     'rdf',      '~> 1.1', '>= 1.1.16.1'
+  gem.add_development_dependency 'rdf-spec', '~> 1.1'
+  gem.add_development_dependency 'rspec',    '~> 3.0'
+  gem.add_development_dependency 'yard' ,    '~> 0.8.7'
 
   gem.post_install_message       = nil
 end
