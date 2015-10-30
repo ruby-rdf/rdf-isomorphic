@@ -16,7 +16,7 @@ module RDF
 
     # Returns `true` if this RDF::Enumerable is isomorphic with another.
     #
-    # Takes a :canonicalize => true argument.  If true, RDF::Literals will be
+    # Takes a canonicalize: true argument.  If true, RDF::Literals will be
     # canonicalized while producing a bijection.  This results in broader
     # matches for isomorphism in the case of equivalent literals with different
     # representations.
@@ -33,11 +33,11 @@ module RDF
     alias_method :isomorphic?, :isomorphic_with?
 
 
-    # Returns a hash of RDF::Nodes => RDF::Nodes representing an isomorphic
+    # Returns a hash of RDF:Nodes: RDF::Nodes representing an isomorphic
     # bijection of this RDF::Enumerable's to another RDF::Enumerable's blank
     # nodes, or nil if a bijection cannot be found.
     #
-    # Takes a :canonicalize => true argument.  If true, RDF::Literals will be
+    # Takes a canonicalize: true argument.  If true, RDF::Literals will be
     # canonicalized while producing a bijection.  This results in broader
     # matches for isomorphism in the case of equivalent literals with different
     # representations.
@@ -52,7 +52,7 @@ module RDF
       grounded_stmts_match = (count == other.count)
 
       grounded_stmts_match &&= each_statement.all? do | stmt |
-        stmt.has_blank_nodes? || other.has_statement?(stmt)
+        stmt.node? || other.has_statement?(stmt)
       end
 
       if grounded_stmts_match
@@ -60,8 +60,8 @@ module RDF
         # consideration--we could just as well pass in self and other.  But we
         # will be iterating over this list quite a bit during the algorithm, so
         # we break it down to the parts we're interested in.
-        blank_stmts = find_all { |statement| statement.has_blank_nodes? }
-        other_blank_stmts = other.find_all { |statement| statement.has_blank_nodes? }
+        blank_stmts = find_all { |statement| statement.node? }
+        other_blank_stmts = other.find_all { |statement| statement.node? }
 
         nodes = RDF::Isomorphic.blank_nodes_in(blank_stmts)
         other_nodes = RDF::Isomorphic.blank_nodes_in(other_blank_stmts)
