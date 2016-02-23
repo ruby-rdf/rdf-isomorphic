@@ -1,7 +1,4 @@
-
-require("rubygems")
-require("rspec")
-require("rspec/core/rake_task")
+require "rubygems"
 
 namespace :gem do
   desc "Build the rdf-isomorphic-#{File.read('VERSION').chomp}.gem file"
@@ -25,15 +22,9 @@ RSpec::Core::RakeTask.new do |spec|
   spec.rspec_opts = %w(--options spec/spec.opts) if File.exists?('spec/spec.opts')
 end
 
-desc "Run specs through RCov"
-RSpec::Core::RakeTask.new("spec:rcov") do |spec|
-  spec.rcov = true
-  spec.rcov_opts =  %q[--exclude "spec"]
-end
-
-desc "Generate HTML report specs"
-RSpec::Core::RakeTask.new("doc:spec") do |spec|
-  spec.rspec_opts = ["--format", "html", "-o", "doc/spec.html"]
+desc "Run specifications for continuous integration"
+RSpec::Core::RakeTask.new("spec:ci") do |spec|
+  spec.rspec_opts = %w(--options spec/spec.opts) if File.exists?('spec/spec.opts')
 end
 
 require 'yard'

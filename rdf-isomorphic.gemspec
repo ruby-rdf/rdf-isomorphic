@@ -7,16 +7,16 @@ GEMSPEC = Gem::Specification.new do |gem|
 
   gem.name               = 'rdf-isomorphic'
   gem.homepage           = 'http://ruby-rdf.github.com/rdf-isomorphic'
-  gem.license            = 'Public Domain' if gem.respond_to?(:license=)
+  gem.license            = 'Unlicense'
   gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
-  gem.summary            = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
+  gem.summary            = 'RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts.'
   gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender','Arto Bendiken']
   gem.email              = 'public-rdf-ruby@w3.org'
 
   gem.platform           = Gem::Platform::RUBY
-  gem.files              = %w(AUTHORS README UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
+  gem.files              = %w(AUTHORS README.md UNLICENSE VERSION) + Dir.glob('lib/**/*.rb')
   gem.bindir             = %q(bin)
   gem.executables        = %w()
   gem.default_executable = gem.executables.first
