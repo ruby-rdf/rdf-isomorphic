@@ -3,7 +3,7 @@
 This is an [RDF.rb][] extension for RDF Isomorphism functionality for RDF::Enumerables.
 That includes RDF::Repository, RDF::Graph, query results, and more.
 
-For more information about [RDF.rb][], see <http://rdf.rubyforge.org>
+For more information about [RDF.rb][], see <http://www.rubydoc.info/github/ruby-rdf/rdf/>
 
 [![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)](http://badge.fury.io/rb/rdf-isomorphic)
 [![Build Status](https://travis-ci.org/ruby-rdf/rdf-isomorphic.png)](https://travis-ci.org/ruby-rdf/rdf-isomorphic)
