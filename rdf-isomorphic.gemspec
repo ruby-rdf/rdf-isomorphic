@@ -10,7 +10,6 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.license            = 'Unlicense'
   gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
   gem.summary            = 'RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts.'
-  gem.rubyforge_project  = 'rdf'
 
   gem.authors            = ['Ben Lavender','Arto Bendiken']
   gem.email              = 'public-rdf-ruby@w3.org'
@@ -25,10 +24,12 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.test_files         = %w()
   gem.has_rdoc           = false
 
-  gem.required_ruby_version      = '>= 2.0'
+  gem.required_ruby_version      = '>= 2.2.2'
   gem.requirements               = []
-  gem.add_runtime_dependency     'rdf',      '~> 2.0'
-  gem.add_development_dependency 'rdf-spec', '~> 2.0'
+  #gem.add_runtime_dependency     'rdf',      '~> 3.0'
+  #gem.add_development_dependency 'rdf-spec', '~> 3.0'
+  gem.add_runtime_dependency     'rdf',      '>= 2.0', '< 4.0'
+  gem.add_development_dependency 'rdf-spec', '>= 2.0', '< 4.0'
   gem.add_development_dependency 'rspec',    '~> 3.0'
   gem.add_development_dependency 'yard' ,    '~> 0.8.7'
 
