@@ -26,8 +26,8 @@ module RDF
     # @return [Boolean]
     # @example
     #     repository_a.isomorphic_with repository_b #=> true
-    def isomorphic_with?(other, opts = {})
-      !(bijection_to(other, opts).nil?)
+    def isomorphic_with?(other, **opts)
+      !(bijection_to(other, **opts).nil?)
     end
 
     alias_method :isomorphic?, :isomorphic_with?
@@ -47,7 +47,7 @@ module RDF
     # @param other [RDF::Enumerable]
     # @param opts [Hash<Symbol => Any>] options
     # @return [Hash, nil]
-    def bijection_to(other, opts = {})
+    def bijection_to(other, **opts)
 
       grounded_stmts_match = (count == other.count)
 
@@ -65,7 +65,7 @@ module RDF
 
         nodes = RDF::Isomorphic.blank_nodes_in(blank_stmts)
         other_nodes = RDF::Isomorphic.blank_nodes_in(other_blank_stmts)
-        build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes, {}, {}, opts
+        build_bijection_to blank_stmts, nodes, other_blank_stmts, other_nodes, {}, {}, **opts
       else
         nil
       end
@@ -91,7 +91,7 @@ module RDF
     # @param [Hash]             opts
     # @return [nil,Hash]
     # @private
-    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {}, opts = {})
+    def build_bijection_to(anon_stmts, nodes, other_anon_stmts, other_nodes, these_grounded_hashes = {}, other_grounded_hashes = {}, **opts)
 
       # Create a hash signature of every node, based on the signature of
       # statements it exists in.  
