@@ -9,8 +9,8 @@ module RDF
   #
   # RDF::Isomorphic provides the functions isomorphic_with and bijection_to for RDF::Enumerable.
   #
-  # @see http://www.rubydoc.info/github/ruby-rdf/rdf/
-  # @see http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
+  # @see https://www.rubydoc.info/github/ruby-rdf/rdf/
+  # @see https://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
     autoload :VERSION,        'rdf/isomorphic/version'
 
@@ -77,7 +77,7 @@ module RDF
     # The main recursive bijection algorithm.
     #
     # This algorithm is very similar to the one explained by Jeremy Carroll in
-    # http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf. Page 12 has the
+    # https://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf. Page 12 has the
     # relevant pseudocode.
     #
     # Many more comments are in the method itself.

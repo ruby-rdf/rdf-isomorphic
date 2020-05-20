@@ -6,7 +6,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.date               = File.mtime('VERSION').strftime('%Y-%m-%d')
 
   gem.name               = 'rdf-isomorphic'
-  gem.homepage           = 'http://ruby-rdf.github.com/rdf-isomorphic'
+  gem.homepage           = 'https://ruby-rdf.github.com/rdf-isomorphic'
   gem.license            = 'Unlicense'
   gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
   gem.summary            = 'RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts.'

@@ -3,9 +3,9 @@
 This is an [RDF.rb][] extension for RDF Isomorphism functionality for RDF::Enumerables.
 That includes RDF::Repository, RDF::Graph, query results, and more.
 
-For more information about [RDF.rb][], see <http://www.rubydoc.info/github/ruby-rdf/rdf/>
+For more information about [RDF.rb][], see <https://www.rubydoc.info/github/ruby-rdf/rdf/>
 
-[![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)](http://badge.fury.io/rb/rdf-isomorphic)
+[![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)](https://badge.fury.io/rb/rdf-isomorphic)
 [![Build Status](https://travis-ci.org/ruby-rdf/rdf-isomorphic.png)](https://travis-ci.org/ruby-rdf/rdf-isomorphic)
 
 ## Synopsis:
@@ -32,8 +32,7 @@ For more information about [RDF.rb][], see <http://www.rubydoc.info/github/ruby-
 ## Algorithm
 
 The algorithm used here is very similar to the one described by Jeremy Carroll
-in <http://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.  See
-<http://blog.datagraph.org/2010/03/rdf-isomorphism>.
+in <https://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf>.
 
 Generally speaking, the Carroll algorithm is a very good fit for RDF graphs. It
 is a specialization of the naive factorial-time test for graph isomorphism,
@@ -64,14 +63,14 @@ specs in RDF libraries.  Try this in your tests:
     end
 
 ### Information
- * Author: Ben Lavender <blavender@gmail.com> - <http://bhuga.net>
- * Author: Arto Bendiken <arto.bendiken@gmail.com> - <http://ar.to>
- * Source: <http://github.com/ruby-rdf/rdf-isomorphic>
- * Issues: <http://github.com/ruby-rdf/rdf-isomorphic/issues>
+ * Author: Ben Lavender <blavender@gmail.com> - <https://bhuga.net>
+ * Author: Arto Bendiken <arto.bendiken@gmail.com> - <https://ar.to>
+ * Source: <https://github.com/ruby-rdf/rdf-isomorphic>
+ * Issues: <https://github.com/ruby-rdf/rdf-isomorphic/issues>
 
 ### See also
- * RDF.rb: <http://ruby-rdf.github.com>
- * RDF.rb source: <http://github.com/ruby-rdf/rdf>
+ * RDF.rb: <https://ruby-rdf.github.com>
+ * RDF.rb source: <https://github.com/ruby-rdf/rdf>
 
 ## Contributing
 
@@ -95,9 +94,9 @@ This repository uses [Git Flow](https://github.com/nvie/gitflow) to mange develo
 ## License
 
 This is free and unencumbered public domain software. For more information,
-see <http://unlicense.org/> or the accompanying {file:UNLICENSE} file.
+see <https://unlicense.org/> or the accompanying {file:UNLICENSE} file.
 
-[RDF.rb]:           http://ruby-rdf.github.com/
-[YARD]:             http://yardoc.org/
-[YARD-GS]:          http://rubydoc.info/docs/yard/file/docs/GettingStarted.md
-[PDD]:              http://lists.w3.org/Archives/Public/public-rdf-ruby/2010May/0013.html
+[RDF.rb]:           https://ruby-rdf.github.com/
+[YARD]:             https://yardoc.org/
+[YARD-GS]:          https://rubydoc.info/docs/yard/file/docs/GettingStarted.md
+[PDD]:              https://lists.w3.org/Archives/Public/public-rdf-ruby/2010May/0013.html
