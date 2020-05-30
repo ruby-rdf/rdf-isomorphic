@@ -63,8 +63,9 @@ specs in RDF libraries.  Try this in your tests:
     end
 
 ### Information
- * Author: Ben Lavender <blavender@gmail.com> - <https://bhuga.net>
- * Author: Arto Bendiken <arto.bendiken@gmail.com> - <https://ar.to>
+ * Author: Ben Lavender <blavender@gmail.com> - <https://bhuga.net/>
+ * Author: Arto Bendiken <arto.bendiken@gmail.com> - <https://ar.to/>
+ * Author: Gregg Kellogg <gregg@greggkellogg.net> - <https://greggkellogg.net/>
  * Source: <https://github.com/ruby-rdf/rdf-isomorphic>
  * Issues: <https://github.com/ruby-rdf/rdf-isomorphic/issues>
 

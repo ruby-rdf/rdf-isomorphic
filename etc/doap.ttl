@@ -1,0 +1,46 @@
+@base         <https://rubygems.org/gems/rdf-isomorphic> .
+@prefix rdf:  <http://www.w3.org/1999/02/22-rdf-syntax-ns#> .
+@prefix rdfs: <http://www.w3.org/2000/01/rdf-schema#> .
+@prefix dc:   <http://purl.org/dc/terms/> .
+@prefix foaf: <http://xmlns.com/foaf/0.1/> .
+@prefix doap: <http://usefulinc.com/ns/doap#> .
+
+<> a doap:Project ;
+  doap:name          "RDF::Isomorphic" ;
+  doap:homepage      <> ;
+  doap:license       <https://unlicense.org/> ;
+  doap:shortdesc     "RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts."@en ;
+  doap:description   "RDF.rb extension for graph bijections and isomorphic equivalence."@en ;
+  doap:created       "2010-02-01" ;
+  doap:programming-language "Ruby" ;
+  doap:category      <http://dbpedia.org/resource/Resource_Description_Framework>,
+                     <http://dbpedia.org/resource/Ruby_(programming_language)> ;
+  doap:implements    <http://www.w3.org/TR/rdf11-concepts/> ;
+  doap:download-page <> ;
+  doap:bug-database  <https://github.com/ruby-rdf/rdf-isomorphic/issues> ;
+  doap:blog          <https://ar.to/>, <https://greggkellogg.net/> ;
+  doap:developer     <https://ar.to/#self>, <https://bhuga.net/#ben>, <https://greggkellogg.net/foaf#me> ;
+  doap:maintainer    <https://greggkellogg.net/foaf#me> ;
+  doap:documenter    <https://ar.to/#self>, <https://bhuga.net/#ben>, <https://greggkellogg.net/foaf#me> ;
+  foaf:maker         <https://bhuga.net/#ben> ;
+  dc:creator         <https://bhuga.net/#ben> .
+
+<https://bhuga.net/#ben> a foaf:Person ;
+  foaf:name          "Ben Lavender" ;
+  foaf:mbox          <mailto:blavender@gmail.com> ;
+  foaf:mbox_sha1sum  "dbf45f4ffbd27b67aa84f02a6a31c144727d10af" ;
+  foaf:homepage      <https://bhuga.net/> ;
+  foaf:made          <> .
+
+<https://ar.to/#self> a foaf:Person ;
+  foaf:name          "Arto Bendiken" ;
+  foaf:mbox          <mailto:arto@bendiken.net> ;
+  foaf:mbox_sha1sum  "a033f652c84a4d73b8c26d318c2395699dd2bdfb" ;
+  foaf:homepage      <https://ar.to/> .
+
+<https://greggkellogg.net/foaf#me> a foaf:Person ;
+  foaf:name          "Gregg Kellogg" ;
+  foaf:mbox          <mailto:gregg@greggkellogg.net> ;
+  foaf:mbox_sha1sum  "35bc44e6d0070e5ad50ccbe0d24403c96af2b9bd" ;
+  foaf:homepage      <https://greggkellogg.net/>;
+  rdfs:isDefinedBy   <https://greggkellogg.net/foaf> .

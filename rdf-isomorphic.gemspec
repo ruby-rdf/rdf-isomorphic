@@ -11,7 +11,7 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.description        = 'RDF.rb extension for graph bijections and isomorphic equivalence.'
   gem.summary            = 'RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts.'
 
-  gem.authors            = ['Ben Lavender','Arto Bendiken']
+  gem.authors            = ['Ben Lavender','Arto Bendiken', 'Gregg Kellogg']
   gem.email              = 'public-rdf-ruby@w3.org'
 
   gem.platform           = Gem::Platform::RUBY
