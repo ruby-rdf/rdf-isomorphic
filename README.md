@@ -15,7 +15,6 @@ For more information about [RDF.rb][], see <https://www.rubydoc.info/github/ruby
     require 'rdf/isomorphic'
     require 'rdf/ntriples'
 
-
     a = RDF::Repository.load './tests/isomorphic/test1/test1-1.nt'
     a.first
     # < RDF::Statement:0xd344c4(<http://example.org/a> <http://example.org/prop> <_:abc> .) >
