@@ -22,8 +22,8 @@ GEMSPEC = Gem::Specification.new do |gem|
   gem.requirements               = []
   gem.add_runtime_dependency     'rdf',      '~> 3.1'
   gem.add_development_dependency 'rdf-spec', '~> 3.1'
-  gem.add_development_dependency 'rspec',    '~> 3.9'
-  gem.add_development_dependency 'yard' ,    '~> 0.9.20'
+  gem.add_development_dependency 'rspec',    '~> 3.10'
+  gem.add_development_dependency 'yard' ,    '~> 0.9'
 
   gem.post_install_message       = nil
 end
