@@ -9,7 +9,7 @@
   doap:name          "RDF::Isomorphic" ;
   doap:homepage      <> ;
   doap:license       <https://unlicense.org/1.0/> ;
-  doap:shortdesc     "RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts."@en ;
+  doap:shortdesc     "RDF Graph/Dataset Isomorphism as defined in RDF 1.1 Concepts for Ruby."@en ;
   doap:description   "RDF.rb extension for graph bijections and isomorphic equivalence."@en ;
   doap:created       "2010-02-01" ;
   doap:programming-language "Ruby" ;
