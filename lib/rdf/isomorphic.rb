@@ -162,7 +162,7 @@ module RDF
     # @param [Array<RDF::Statement>] blank_stmt_list
     # @return [Array<RDF::Node>]
     def self.blank_nodes_in(blank_stmt_list)
-      blank_stmt_list.map {|statement | statement.to_quad.compact.select(&:node?)}.flatten.uniq
+      blank_stmt_list.map {|statement | statement.terms.select(&:node?)}.flatten.uniq
     end
 
     # Given a set of statements, create a mapping of node => SHA1 for a given
@@ -235,9 +235,9 @@ module RDF
       statement_signatures = []
       grounded = true
       statements.each do | statement |
-        if statement.to_quad.include?(node)
+        if statement.terms.include?(node)
           statement_signatures << hash_string_for(statement, hashes, node, canonicalize)
-          statement.to_quad.compact.each do | resource |
+          statement.terms.each do | resource |
             grounded = false unless grounded?(resource, hashes) || resource == node
           end
         end
@@ -252,7 +252,7 @@ module RDF
     # return [String]
     # @private
     def self.hash_string_for(statement, hashes, node, canonicalize)
-      statement.to_quad.map {|r| string_for_node(r, hashes, node, canonicalize)}.join("")
+      statement.terms.map {|r| string_for_node(r, hashes, node, canonicalize)}.join("")
     end
 
     # Returns true if a given node is grounded
