@@ -7,7 +7,7 @@ tests = {}
 [:isomorphic, :non_isomorphic].each do |type|
   tests[type] = {}
   testdirs = Dir.glob(File.join(File.dirname(__FILE__), 'tests', type.to_s, '*'))
-  testdirs.each do |dir|
+  testdirs.sort.each do |dir|
     testfiles = Dir.glob(File.join(dir, '*'))
     tests[type][File.basename(dir)] = testfiles
   end
@@ -24,7 +24,7 @@ describe RDF::Isomorphic do
   context "when comparing isomorphic enumerables" do
     tests[:isomorphic].keys.each do | test_number |
       it "should find all enumerables associated with #{test_number} isomorphic" do
-        first, second = tests[:isomorphic][test_number].map {|t| RDF::Repository.load(t)}
+        first, second = tests[:isomorphic][test_number].map {|t| RDF::Repository.load(t, rdfstar: true)}
         expect(first).to be_isomorphic_with second
       end
     end
@@ -33,7 +33,7 @@ describe RDF::Isomorphic do
   context "when comparing non-isomorphic enumerables" do
     tests[:non_isomorphic].keys.each do | test_number |
       it "should find enumerables from #{test_number} non-isomorphic" do
-        first, second = tests[:non_isomorphic][test_number].map {|t| RDF::Repository.load(t)}
+        first, second = tests[:non_isomorphic][test_number].map {|t| RDF::Repository.load(t, rdfstar: true)}
         expect(first).not_to be_isomorphic_with second
       end
     end
