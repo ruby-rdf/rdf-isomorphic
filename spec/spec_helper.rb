@@ -6,7 +6,6 @@ require 'rdf'
 begin
   require 'simplecov'
   require 'simplecov-lcov'
-  require 'coveralls'
 
   SimpleCov::Formatter::LcovFormatter.config do |config|
     #Coveralls is coverage by default/lcov. Send info results
@@ -24,3 +23,5 @@ begin
 rescue LoadError => e
   STDERR.puts "Coverage Skipped: #{e.message}"
 end
+
+require 'rdf/isomorphic'
