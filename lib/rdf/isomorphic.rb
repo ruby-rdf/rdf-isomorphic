@@ -301,7 +301,10 @@ module RDF
 
 
   # Extend RDF::Enumerables with these functions.
-  module Enumerable 
+  module Enumerable
+    include RDF::Isomorphic
+  end
+  class Enumerable::Enumerator
     include RDF::Isomorphic
   end
 end
