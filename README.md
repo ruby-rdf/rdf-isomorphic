@@ -3,7 +3,7 @@
 This is an [RDF.rb][] extension for RDF Isomorphism functionality for RDF::Enumerables.
 That includes RDF::Repository, RDF::Graph, query results, and more.
 
-For more information about [RDF.rb][], see <https://www.rubydoc.info/github/ruby-rdf/rdf/>
+For more information about [RDF.rb][], see <https://ruby-rdf.github.io/rdf/>
 
 [![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)](https://badge.fury.io/rb/rdf-isomorphic)
 [![Build Status](https://github.com/ruby-rdf/rdf-isomorphic/workflows/CI/badge.svg?branch=develop)](https://github.com/ruby-rdf/rdf-isomorphic/actions?query=workflow%3ACI)
@@ -71,7 +71,7 @@ specs in RDF libraries.  Try this in your tests:
  * Issues: <https://github.com/ruby-rdf/rdf-isomorphic/issues>
 
 ### See also
- * RDF.rb: <https://ruby-rdf.github.com>
+ * RDF.rb: <https://ruby-rdf.github.io>
  * RDF.rb source: <https://github.com/ruby-rdf/rdf>
 
 ## Contributing
@@ -100,7 +100,7 @@ This repository uses [Git Flow](https://github.com/nvie/gitflow) to mange develo
 This is free and unencumbered public domain software. For more information,
 see <https://unlicense.org/> or the accompanying {file:UNLICENSE} file.
 
-[RDF.rb]:           https://ruby-rdf.github.com/
+[RDF.rb]:           https://ruby-rdf.github.io/
 [YARD]:             https://yardoc.org/
 [YARD-GS]:          https://rubydoc.info/docs/yard/file/docs/GettingStarted.md
 [PDD]:              https://unlicense.org/#unlicensing-contributions

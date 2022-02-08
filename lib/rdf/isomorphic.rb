@@ -9,7 +9,7 @@ module RDF
   #
   # RDF::Isomorphic provides the functions isomorphic_with and bijection_to for RDF::Enumerable.
   #
-  # @see https://www.rubydoc.info/github/ruby-rdf/rdf/
+  # @see https://ruby-rdf.github.io/rdf/
   # @see https://www.hpl.hp.com/techreports/2001/HPL-2001-293.pdf
   module Isomorphic
     autoload :VERSION,        'rdf/isomorphic/version'
@@ -301,7 +301,10 @@ module RDF
 
 
   # Extend RDF::Enumerables with these functions.
-  module Enumerable 
+  module Enumerable
+    include RDF::Isomorphic
+  end
+  class Enumerable::Enumerator
     include RDF::Isomorphic
   end
 end
