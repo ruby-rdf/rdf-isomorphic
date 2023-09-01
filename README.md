@@ -5,7 +5,7 @@ That includes RDF::Repository, RDF::Graph, query results, and more.
 
 For more information about [RDF.rb][], see <https://ruby-rdf.github.io/rdf/>
 
-[![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.png)](https://badge.fury.io/rb/rdf-isomorphic)
+[![Gem Version](https://badge.fury.io/rb/rdf-isomorphic.svg)](https://badge.fury.io/rb/rdf-isomorphic)
 [![Build Status](https://github.com/ruby-rdf/rdf-isomorphic/workflows/CI/badge.svg?branch=develop)](https://github.com/ruby-rdf/rdf-isomorphic/actions?query=workflow%3ACI)
 [![Coverage Status](https://coveralls.io/repos/ruby-rdf/rdf-isomorphic/badge.svg?branch=develop)](https://coveralls.io/github/ruby-rdf/rdf-isomorphic?branch=develop)
 [![Gitter chat](https://badges.gitter.im/ruby-rdf/rdf.png)](https://gitter.im/ruby-rdf/rdf)
