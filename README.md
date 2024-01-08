@@ -70,6 +70,10 @@ specs in RDF libraries.  Try this in your tests:
  * Source: <https://github.com/ruby-rdf/rdf-isomorphic>
  * Issues: <https://github.com/ruby-rdf/rdf-isomorphic/issues>
 
+## Change Log
+
+See [Release Notes on GitHub](https://github.com/ruby-rdf/rdf-isomorphic/releases)
+
 ### See also
  * RDF.rb: <https://ruby-rdf.github.io>
  * RDF.rb source: <https://github.com/ruby-rdf/rdf>
